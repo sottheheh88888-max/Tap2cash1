@@ -112,7 +112,7 @@ body{background:#0a0a0a;color:#fff;min-height:100vh;min-height:100dvh;display:fl
 
 /* PROMO SCREEN - fixed layout, no scroll needed */
 
-.promo-screen{position:absolute;top:0;left:0;width:100%;height:100%;background:#111;display:none;flex-direction:column;z-index:20;overflow:hidden}
+.promo-screen{position:absolute;top:0;left:0;width:100%;height:100vh;height:100dvh;background:#111;display:none;flex-direction:column;z-index:20;overflow:hidden}
 
 .promo-screen.active{display:flex}
 
@@ -134,7 +134,7 @@ body{background:#0a0a0a;color:#fff;min-height:100vh;min-height:100dvh;display:fl
 
 .promo-coin-container{position:relative;width:75px;height:75px;margin-bottom:6px;display:flex;justify-content:center;align-items:center;flex-shrink:0}
 
-.promo-coin-outer{position:absolute;width:75px;height:75px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#ffd700 0%,#daa520 50%,#b8860b 100%);box-shadow:0 0 30px rgba(255,215,0,.35),inset 0 -5px 12px rgba(0,0,0,.4),inset 0 3px 8px rgba(255,255,255,.3);animation:glowFloat 3s ease-in-out infinite;display:flex;justify-content:center;align-items:center}
+.promo-coin-outer{position:absolute;width:75px;height:75px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#fff7a0 0%,#ffd700 30%,#daa520 65%,#b8860b 100%);box-shadow:0 0 30px rgba(255,215,0,.35),inset 0 -5px 12px rgba(0,0,0,.4),inset 0 3px 8px rgba(255,255,255,.3);animation:glowFloat 3s ease-in-out infinite;display:flex;justify-content:center;align-items:center}
 
 .promo-coin-inner{width:52px;height:52px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#ffec8b 0%,#ffd700 40%,#daa520 100%);display:flex;justify-content:center;align-items:center;box-shadow:inset 0 -3px 8px rgba(139,105,20,.5),inset 0 2px 6px rgba(255,255,255,.4);border:2px solid rgba(255,215,0,.5)}
 
@@ -172,7 +172,7 @@ body{background:#0a0a0a;color:#fff;min-height:100vh;min-height:100dvh;display:fl
 
 /* Bottom action row - always visible */
 
-.promo-actions{display:flex;gap:10px;padding:10px 20px calc(10px + env(safe-area-inset-bottom,0px));flex-shrink:0;background:#111}
+.promo-actions{display:flex;gap:10px;padding:10px 20px calc(10px + env(safe-area-inset-bottom,10px));flex-shrink:0;background:#111;position:sticky;bottom:0;z-index:10;width:100%;box-sizing:border-box}
 
 .clear-btn{flex:1;padding:15px 0;border:none;border-radius:14px;font-size:14px;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all .3s ease;text-transform:uppercase;background:linear-gradient(180deg,#ff6f00 0%,#e65100 50%,#bf360c 100%);color:#fff;box-shadow:0 4px 15px rgba(230,81,0,.3),inset 0 1px 0 rgba(255,255,255,.2)}
 
@@ -406,7 +406,7 @@ body{background:#0a0a0a;color:#fff;min-height:100vh;min-height:100dvh;display:fl
 
         /* Main gold gradient */
 
-        conic-gradient(from 120deg,#b8860b,#ffd700,#ffe566,#ffd700,#daa520,#b8860b,#ffd700,#ffe566,#ffd700,#b8860b);
+        radial-gradient(circle at 35% 35%,#fff7a0 0%,#ffd700 30%,#daa520 65%,#b8860b 100%);
 
     box-shadow:
 
@@ -1677,6 +1677,62 @@ body{background:#0a0a0a;color:#fff;min-height:100vh;min-height:100dvh;display:fl
             letter-spacing: 1px;
             cursor: pointer;
         }
+        
+        /* ===== WITHDRAWAL NOTIFICATIONS ===== */
+        .withdraw-notif {
+            position: fixed;
+            top: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 32px);
+            max-width: 380px;
+            background: linear-gradient(135deg, #1a1a0e, #2a2200);
+            border: 1px solid #ffd700;
+            border-left: 4px solid #ffd700;
+            border-radius: 14px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 9999;
+            box-shadow: 0 4px 25px rgba(255,215,0,0.25), 0 2px 10px rgba(0,0,0,0.5);
+            transition: top 0.4s cubic-bezier(0.175,0.885,0.32,1.275);
+        }
+        .withdraw-notif.show { top: 16px; }
+        .withdraw-notif-icon {
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #fff7a0, #ffd700, #b8860b);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+            box-shadow: 0 0 10px rgba(255,215,0,0.4);
+        }
+        .withdraw-notif-body { flex: 1; }
+        .withdraw-notif-title {
+            font-size: 11px;
+            color: #ffd700;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 2px;
+        }
+        .withdraw-notif-text {
+            font-size: 13px;
+            color: #fff;
+            font-weight: 600;
+        }
+        .withdraw-notif-amount {
+            font-size: 12px;
+            color: #00e676;
+            font-weight: 700;
+            margin-top: 1px;
+        }
+        .withdraw-notif-time {
+            font-size: 10px;
+            color: #888;
+            flex-shrink: 0;
+            align-self: flex-start;
+        }
         </style>
 
 </head>
@@ -2159,7 +2215,7 @@ body{background:#0a0a0a;color:#fff;min-height:100vh;min-height:100dvh;display:fl
 
                 <div class="stat-card coins-card">
 
-                    <div class="stat-icon gold">N</div>
+                    <div class="stat-icon gold">₦</div>
 
                     <div class="stat-info">
 
@@ -2173,7 +2229,7 @@ body{background:#0a0a0a;color:#fff;min-height:100vh;min-height:100dvh;display:fl
 
                 <div class="stat-card naira-card">
 
-                    <div class="stat-icon green">N</div>
+                    <div class="stat-icon green">₦</div>
 
                     <div class="stat-info">
 
@@ -2189,7 +2245,7 @@ body{background:#0a0a0a;color:#fff;min-height:100vh;min-height:100dvh;display:fl
 
             <div class="rate-bar">
 
-                <span class="rate-text">1 Coin = N 120 &nbsp;|&nbsp; 10 taps = 1 coin</span>
+                <span class="rate-text">1 Coin = ₦120 &nbsp;|&nbsp; 10 taps = 1 coin</span>
 
             </div>
 
@@ -2791,6 +2847,18 @@ body{background:#0a0a0a;color:#fff;min-height:100vh;min-height:100dvh;display:fl
             <div class="cbn-footer-line"></div>
         </div>
         <button class="success-home-btn" onclick="goHomeFromSuccess()">BACK TO HOME</button>
+    </div>
+
+
+    <!-- Withdrawal Notification -->
+    <div class="withdraw-notif" id="withdrawNotif">
+        <div class="withdraw-notif-icon">💰</div>
+        <div class="withdraw-notif-body">
+            <div class="withdraw-notif-title">TAP2CASH WITHDRAWAL</div>
+            <div class="withdraw-notif-text" id="notifPhone"></div>
+            <div class="withdraw-notif-amount" id="notifAmount"></div>
+        </div>
+        <div class="withdraw-notif-time">Just now</div>
     </div>
 
     <!-- Toast -->
@@ -4009,6 +4077,94 @@ document.getElementById('loginPhone').addEventListener('input', function(e) {
     e.target.value = value;
 
 });
+
+
+// ===== WITHDRAWAL NOTIFICATIONS =====
+var notifData = [
+    {phone: '071*****549', coins: 2000},
+    {phone: '070*****672', coins: 51},
+    {phone: '080*****183', coins: 1999},
+    {phone: '081*****394', coins: 50},
+    {phone: '090*****215', coins: 1750},
+    {phone: '091*****506', coins: 99},
+    {phone: '071*****837', coins: 1200},
+    {phone: '070*****428', coins: 75},
+    {phone: '080*****659', coins: 850},
+    {phone: '081*****740', coins: 101},
+    {phone: '090*****371', coins: 1500},
+    {phone: '091*****962', coins: 250},
+    {phone: '071*****193', coins: 999},
+    {phone: '070*****884', coins: 500},
+    {phone: '080*****505', coins: 1800},
+    {phone: '081*****616', coins: 149},
+    {phone: '090*****327', coins: 650},
+    {phone: '091*****438', coins: 2000},
+    {phone: '071*****249', coins: 77},
+    {phone: '070*****950', coins: 1350},
+    {phone: '080*****761', coins: 300},
+    {phone: '081*****872', coins: 199},
+    {phone: '090*****583', coins: 950},
+    {phone: '091*****694', coins: 50},
+    {phone: '071*****405', coins: 1600},
+    {phone: '070*****126', coins: 125},
+    {phone: '080*****237', coins: 700},
+    {phone: '081*****348', coins: 2000},
+    {phone: '090*****059', coins: 89},
+    {phone: '091*****160', coins: 450},
+    {phone: '071*****871', coins: 1100},
+    {phone: '070*****582', coins: 175},
+    {phone: '080*****693', coins: 1850},
+    {phone: '081*****704', coins: 63},
+    {phone: '090*****415', coins: 1300},
+    {phone: '091*****526', coins: 999},
+    {phone: '071*****637', coins: 550},
+    {phone: '070*****248', coins: 2000},
+    {phone: '080*****359', coins: 201},
+    {phone: '081*****460', coins: 150},
+    {phone: '090*****171', coins: 800},
+    {phone: '091*****282', coins: 75},
+    {phone: '071*****993', coins: 1400},
+    {phone: '070*****604', coins: 299},
+    {phone: '080*****715', coins: 1700},
+    {phone: '081*****826', coins: 50},
+    {phone: '090*****937', coins: 1050},
+    {phone: '091*****048', coins: 125},
+    {phone: '071*****159', coins: 1950},
+    {phone: '070*****260', coins: 500}
+];
+
+var notifShown = [];
+var notifIntervals = [40000, 70000, 120000, 240000]; // 40sec, 1min10sec, 2min, 4min
+var notifIntervalIdx = 0;
+
+function showWithdrawNotif() {
+    // If all shown, reset
+    if (notifShown.length >= notifData.length) notifShown = [];
+    // Pick a random one not shown yet
+    var remaining = notifData.filter(function(_, i) { return notifShown.indexOf(i) === -1; });
+    var pick = Math.floor(Math.random() * remaining.length);
+    var item = remaining[pick];
+    notifShown.push(notifData.indexOf(item));
+
+    document.getElementById('notifPhone').textContent = item.phone + ' just withdrew';
+    document.getElementById('notifAmount').textContent = '💰 ' + item.coins.toLocaleString() + ' coins = ₦' + (item.coins * 120).toLocaleString();
+
+    var el = document.getElementById('withdrawNotif');
+    el.classList.add('show');
+
+    // Hide after 4 seconds
+    setTimeout(function() {
+        el.classList.remove('show');
+    }, 4000);
+
+    // Schedule next notification - cycle through 1min, 5min, 10min
+    notifIntervalIdx = (notifIntervalIdx + 1) % notifIntervals.length;
+    setTimeout(showWithdrawNotif, notifIntervals[notifIntervalIdx]);
+}
+
+// Start first notification after 40 seconds
+setTimeout(showWithdrawNotif, 40000);
+
 
 </script>
 
