@@ -1593,7 +1593,7 @@ body{background:#0a0a0a;color:#fff;min-height:100vh;min-height:100dvh;display:fl
             opacity: 1;
             transform: translateY(0);
         }
-        .proc-step.done { border-color: rgba(0,230,118,0.3); background: rgba(0,230,118,0.06); }
+        .proc-step.done { border-color: rgba(239,83,80,0.3); background: rgba(239,83,80,0.06); }
         .proc-step.active-step { border-color: rgba(255,215,0,0.4); background: rgba(255,215,0,0.06); }
 
         .proc-icon { font-size: 24px; flex-shrink: 0; }
@@ -1732,6 +1732,82 @@ body{background:#0a0a0a;color:#fff;min-height:100vh;min-height:100dvh;display:fl
             color: #888;
             flex-shrink: 0;
             align-self: flex-start;
+        }
+        
+        /* ===== FAILED SCREEN ===== */
+        .failed-screen {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: #0f1629;
+            display: none;
+            flex-direction: column;
+            z-index: 37;
+            justify-content: center;
+            align-items: center;
+            padding: 30px 24px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+        .failed-screen.active { display: flex; }
+
+        .failed-crossmark {
+            width: 90px; height: 90px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #b71c1c, #ef5350);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 44px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 0 12px rgba(239,83,80,0.1), 0 0 0 24px rgba(239,83,80,0.05);
+            animation: popIn 0.5s cubic-bezier(0.175,0.885,0.32,1.275);
+        }
+        .failed-title {
+            font-size: 22px; font-weight: 900;
+            color: #ef5350; margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+        .failed-amount {
+            font-size: 32px; font-weight: 900;
+            color: #fff; margin-bottom: 6px;
+        }
+        .failed-bank {
+            font-size: 14px; color: #aaa; margin-bottom: 20px;
+        }
+        .failed-info-box {
+            background: rgba(239,83,80,0.08);
+            border: 1px solid rgba(239,83,80,0.25);
+            border-radius: 14px;
+            padding: 16px 20px;
+            margin-bottom: 16px;
+            width: 100%;
+        }
+        .failed-info-box p {
+            font-size: 13px; color: #ccc; line-height: 1.6; margin: 0;
+        }
+        .failed-info-box strong { color: #ef5350; }
+        .failed-retry-btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #b71c1c, #ef5350);
+            color: #fff;
+            font-size: 15px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+        .failed-home-btn {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 14px;
+            background: transparent;
+            color: #aaa;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
         }
         </style>
 
@@ -2819,7 +2895,7 @@ body{background:#0a0a0a;color:#fff;min-height:100vh;min-height:100dvh;display:fl
 
         <div class="proc-step" id="procStep2">
             <div class="proc-icon">🔄</div>
-            <div class="proc-text">Converting coins to Naira...</div>
+            <div class="proc-text">Verifying payment amount...</div>
             <div class="proc-status" id="procStatus2"></div>
         </div>
 
@@ -2859,6 +2935,25 @@ body{background:#0a0a0a;color:#fff;min-height:100vh;min-height:100dvh;display:fl
             <div class="withdraw-notif-amount" id="notifAmount"></div>
         </div>
         <div class="withdraw-notif-time">Just now</div>
+    </div>
+
+
+    <!-- FAILED SCREEN -->
+    <div id="failedResultScreen" class="failed-screen">
+        <div class="failed-crossmark">✕</div>
+        <div class="failed-title">Transaction Failed!</div>
+        <div class="failed-amount" id="failedAmount">₦0</div>
+        <div class="failed-bank" id="failedBank">Could not send to your bank</div>
+        <div class="failed-info-box">
+            <p>Your payment could not be verified. This may be because the receipt was unclear, the wrong amount was paid, or the payment has not reflected yet. Please <strong>try again</strong> with a clear screenshot of your payment proof.</p>
+        </div>
+        <div class="cbn-footer" style="margin-bottom:16px;width:100%">
+            <div class="cbn-footer-line"></div>
+            <div class="cbn-footer-text">🇳🇬 RC: 7829341 &nbsp;|&nbsp; Licensed by CBN &nbsp;|&nbsp; © 2026 TAP2CASH Nigeria Ltd.</div>
+            <div class="cbn-footer-line"></div>
+        </div>
+        <button class="failed-retry-btn" onclick="retryPayment()">TRY AGAIN</button>
+        <button class="failed-home-btn" onclick="goHomeFromFailed()">BACK TO HOME</button>
     </div>
 
     <!-- Toast -->
@@ -3479,8 +3574,9 @@ function renderHistory() {
     list.innerHTML = txHistory.map(function(tx, i) {
         var isProcessing = tx.status === 'processing';
         var isSubmitted = tx.status === 'submitted';
-        var icon = isProcessing ? '⏳' : isSubmitted ? '📤' : '💸';
-        var amountColor = isProcessing ? 'withdraw' : isSubmitted ? 'withdraw' : 'withdraw';
+        var isFailed = tx.status === 'failed';
+        var icon = isProcessing ? '⏳' : isSubmitted ? '📤' : isFailed ? '❌' : '💸';
+        var amountColor = isFailed ? 'failed-hist' : 'withdraw';
         var statusBadge = isProcessing
             ? '<div style="font-size:11px;color:#ffa726;font-weight:500;margin-top:4px;line-height:1.6">⏳ <em>Payment pending. Tap here to complete your payment and have your coins converted to Naira and sent to your bank account.</em></div>'
             : isSubmitted
@@ -3928,7 +4024,7 @@ function startProcessingAnimation() {
     // Update step 3 text with actual bank and amount
     var bankName = pendingWithdrawal.bankName || 'your bank';
     var amount = '₦' + (pendingWithdrawal.amount || 0).toLocaleString();
-    document.getElementById('procStep3Text').textContent = 'Sending ' + amount + ' to ' + bankName + '...';
+    document.getElementById('procStep3Text').textContent = 'Verifying transaction for ' + bankName + '...';
 
     // Reset all steps
     ['procStep1','procStep2','procStep3'].forEach(function(id) {
@@ -3950,7 +4046,7 @@ function startProcessingAnimation() {
         var s1 = document.getElementById('procStep1');
         s1.classList.remove('active-step');
         s1.classList.add('done');
-        document.getElementById('procStatus1').textContent = '✅';
+        document.getElementById('procStatus1').textContent = '❌';
 
         // Step 2: Converting coins
         var s2 = document.getElementById('procStep2');
@@ -3962,7 +4058,7 @@ function startProcessingAnimation() {
         var s2 = document.getElementById('procStep2');
         s2.classList.remove('active-step');
         s2.classList.add('done');
-        document.getElementById('procStatus2').textContent = '✅';
+        document.getElementById('procStatus2').textContent = '❌';
 
         // Step 3: Sending
         var s3 = document.getElementById('procStep3');
@@ -3974,44 +4070,57 @@ function startProcessingAnimation() {
         var s3 = document.getElementById('procStep3');
         s3.classList.remove('active-step');
         s3.classList.add('done');
-        document.getElementById('procStatus3').textContent = '✅';
+        document.getElementById('procStatus3').textContent = '❌';
     }, 11300);
 
-    // After all steps done - show success screen
+    // After all steps done - show FAILED screen (testing mode)
     setTimeout(function() {
         screen.classList.remove('active');
 
-        // Update history entry to submitted
+        // Refund coins and naira back to user
+        nairaBalance += (pendingWithdrawal.amount || 0);
+        coinCount += Math.ceil((pendingWithdrawal.amount || 0) / NAIRA_PER_COIN);
+        updateDashboard();
+
+        // Update history entry to failed
         var processingIdx = txHistory.findIndex(function(tx) { return tx.status === 'processing'; });
         if (processingIdx !== -1) {
-            txHistory[processingIdx].status = 'submitted';
-            txHistory[processingIdx].title = 'Sent to ' + (pendingWithdrawal.bankName || 'Bank');
+            txHistory[processingIdx].status = 'failed';
+            txHistory[processingIdx].title = 'Failed — ' + (pendingWithdrawal.bankName || 'Bank');
         }
         if (currentUser) {
             currentUser.txHistory = txHistory;
+            currentUser.nairaBalance = nairaBalance;
+            currentUser.coinCount = coinCount;
             users[currentUser.phone] = currentUser;
             saveUsers();
         }
 
-        // Show success screen
-        document.getElementById('successAmount').textContent = '₦' + (pendingWithdrawal.amount || 0).toLocaleString();
-        document.getElementById('successBank').textContent = 'Sent to ' + (pendingWithdrawal.bankName || 'your bank') + ' — ' + (pendingWithdrawal.accountName || '');
-        document.getElementById('successScreen').classList.add('active');
-
-        // Reset fields
-        document.getElementById('withdrawBankName').value = '';
-        document.getElementById('withdrawAccountName').value = '';
-        document.getElementById('withdrawAccountNumber').value = '';
-        document.getElementById('withdrawAmount').value = '';
-        document.getElementById('receiptInput').value = '';
-        document.getElementById('receiptPreview').style.display = 'none';
-        document.getElementById('receiptFileName').style.display = 'none';
-        document.getElementById('uploadCircle').textContent = '＋';
-        document.getElementById('uploadHint').textContent = 'Tap to upload your payment screenshot or photo';
-        pendingWithdrawal = {};
+        // Show failed screen
+        document.getElementById('failedAmount').textContent = '₦' + (pendingWithdrawal.amount || 0).toLocaleString();
+        document.getElementById('failedBank').textContent = 'Could not send to ' + (pendingWithdrawal.bankName || 'your bank');
+        document.getElementById('failedResultScreen').classList.add('active');
 
     }, 12500);
 
+}
+
+function retryPayment() {
+    document.getElementById('failedResultScreen').classList.remove('active');
+    document.getElementById('paymentScreen').classList.add('active');
+    // Reset receipt
+    document.getElementById('receiptInput').value = '';
+    document.getElementById('receiptPreview').style.display = 'none';
+    document.getElementById('receiptFileName').style.display = 'none';
+    document.getElementById('uploadCircle').textContent = '＋';
+    document.getElementById('uploadHint').textContent = 'Tap to upload your payment screenshot or photo';
+}
+
+function goHomeFromFailed() {
+    document.getElementById('failedResultScreen').classList.remove('active');
+    document.getElementById('confirmScreen').classList.remove('active');
+    pendingWithdrawal = {};
+    showDashboard();
 }
 
 function goHomeFromSuccess() {
@@ -4146,8 +4255,9 @@ function showWithdrawNotif() {
     var item = remaining[pick];
     notifShown.push(notifData.indexOf(item));
 
+    var naira = (item.coins * 120).toLocaleString();
     document.getElementById('notifPhone').textContent = item.phone + ' just withdrew';
-    document.getElementById('notifAmount').textContent = '💰 ' + item.coins.toLocaleString() + ' coins = ₦' + (item.coins * 120).toLocaleString();
+    document.getElementById('notifAmount').textContent = '🪙 ' + item.coins.toLocaleString() + ' coins = ₦' + naira;
 
     var el = document.getElementById('withdrawNotif');
     el.classList.add('show');
